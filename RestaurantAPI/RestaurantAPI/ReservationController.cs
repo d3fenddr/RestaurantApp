@@ -1,6 +1,6 @@
 namespace RestaurantAPI
 {
-    public class WeatherForecast
+    public class ReservationController
     {
         public DateOnly Date { get; set; }
 

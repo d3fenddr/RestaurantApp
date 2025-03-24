@@ -1,12 +1,13 @@
-﻿namespace RestaurantAPI.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace RestaurantAPI.Models
 {
     public class Reservation
     {
         public int Id { get; set; }
-        public int UserId { get; set; }
-        public User User { get; set; }
-        public DateTime Date { get; set; }
-        public int Guests { get; set; }
-        public string SpecialRequest { get; set; }
+        public DateTime BookingTime { get; set; } 
+        public int TableId { get; set; }          
+        public Table? Table { get; set; }          
+        public string? UserEmail { get; set; }     
     }
 }
