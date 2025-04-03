@@ -1,6 +1,77 @@
-﻿namespace RestaurantAPI.Services
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using RestaurantAPI.Data;
+using RestaurantAPI.DTO;
+using RestaurantAPI.Models;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+
+public class AuthService : IAuthService
 {
-    public class AuthService
+    private readonly ApplicationDbContext _context;
+    private readonly IConfiguration _configuration;
+
+    public AuthService(ApplicationDbContext context, IConfiguration configuration)
     {
+        _context = context;
+        _configuration = configuration;
+    }
+
+    public async Task<string> RegisterAsync(RegisterRequestDto request)
+    {
+        if (await _context.Users.AnyAsync(u => u.Email == request.Email))
+        {
+            throw new ArgumentException("User already exists.");
+        }
+
+        var user = new User
+        {
+            FullName = request.FullName,
+            Email = request.Email,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            Role = "User"
+        };
+
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+
+        return "User created successfully";
+    }
+
+    public async Task<string> LoginAsync(LoginRequestDto request)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+        {
+            throw new UnauthorizedAccessException("Invalid credentials.");
+        }
+
+        return GenerateJwtToken(user);
+    }
+
+    private string GenerateJwtToken(User user)
+    {
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role)
+        };
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var token = new JwtSecurityToken(
+            _configuration["Jwt:Issuer"],
+            _configuration["Jwt:Audience"],
+            claims,
+            expires: DateTime.UtcNow.AddHours(3),
+            signingCredentials: credentials
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
