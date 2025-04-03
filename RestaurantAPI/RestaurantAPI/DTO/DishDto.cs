@@ -1,15 +1,12 @@
-﻿namespace RestaurantAPI.Models
+﻿namespace RestaurantAPI.DTO
 {
-    public class Dish
+    public class DishDto
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public decimal Price { get; set; }
-        public string ImageUrl { get; set; } = string.Empty; // Azure Blob Storage URL
-
-        // Foreign key to Category
+        // Assuming DishCategory is represented by its Id
         public int DishCategoryId { get; set; }
-        public DishCategory DishCategory { get; set; } = null!;
     }
 }

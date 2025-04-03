@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RestaurantAPI.Data;
+using RestaurantAPI.Services;
 using System.Text;
 
 public class Startup
@@ -26,7 +27,14 @@ public class Startup
                 builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
         });
 
+        services.AddScoped<IUserService, UserService>();
+
+        services.AddScoped<IDishService, DishService>();
+
+        services.AddScoped<IOrderService, OrderService>();
+
         services.AddScoped<IAuthService, AuthService>();
+
         // JWT Authentication
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
