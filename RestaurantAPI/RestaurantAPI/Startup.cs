@@ -73,11 +73,11 @@ public class Startup
         app.UseAuthorization();
 
         // Initialize the database using a scoped service
-        //using (var serviceScope = app.ApplicationServices.CreateScope())
-        //{
-        //    var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        //    DbInitializer.Initialize(context);
-        //}
+        using (var serviceScope = app.ApplicationServices.CreateScope())
+        {
+            var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            DbInitializer.Initialize(context);
+        }
 
         app.UseSwagger();
         app.UseSwaggerUI(c =>
