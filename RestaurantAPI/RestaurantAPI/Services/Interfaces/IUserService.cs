@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace RestaurantAPI.Services
+namespace RestaurantAPI.Services.Interfaces
 {
     public interface IUserService
     {

@@ -2,12 +2,13 @@
 using RestaurantAPI.Data; // Assumes ApplicationDbContext is in this namespace
 using RestaurantAPI.DTOs;
 using RestaurantAPI.Models;
+using RestaurantAPI.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RestaurantAPI.Services
+namespace RestaurantAPI.Services.Implementations
 {
     public class UserService : IUserService
     {

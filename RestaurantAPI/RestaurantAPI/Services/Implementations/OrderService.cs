@@ -6,8 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using RestaurantAPI.Services.Interfaces;
 
-namespace RestaurantAPI.Services
+namespace RestaurantAPI.Services.Implementations
 {
     public class OrderService : IOrderService
     {

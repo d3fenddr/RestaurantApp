@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestaurantAPI.DTO;
-using RestaurantAPI.Services;
+using RestaurantAPI.Services.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

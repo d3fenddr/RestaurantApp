@@ -2,7 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RestaurantAPI.Data;
-using RestaurantAPI.Services;
+using RestaurantAPI.Services.Implementations;
+using RestaurantAPI.Services.Interfaces;
 using System.Text;
 
 public class Startup
@@ -28,11 +29,9 @@ public class Startup
         });
 
         services.AddScoped<IUserService, UserService>();
-
         services.AddScoped<IDishService, DishService>();
-
+        services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IOrderService, OrderService>();
-
         services.AddScoped<IAuthService, AuthService>();
 
         // JWT Authentication
@@ -72,8 +71,14 @@ public class Startup
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.UseSwagger();
+        // Initialize the database using a scoped service
+        using (var serviceScope = app.ApplicationServices.CreateScope())
+        {
+            var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            DbInitializer.Initialize(context);
+        }
 
+        app.UseSwagger();
         app.UseSwaggerUI(c =>
         {
             c.SwaggerEndpoint("/swagger/v1/swagger.json", "RestaurantAPI v1");

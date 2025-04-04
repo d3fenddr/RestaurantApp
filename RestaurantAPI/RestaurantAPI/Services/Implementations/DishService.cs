@@ -5,8 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RestaurantAPI.Services.Interfaces;
 
-namespace RestaurantAPI.Services
+namespace RestaurantAPI.Services.Implementations
 {
     public class DishService : IDishService
     {
