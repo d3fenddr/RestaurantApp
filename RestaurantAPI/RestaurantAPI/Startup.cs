@@ -31,6 +31,7 @@ public class Startup
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IDishService, DishService>();
         services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<ICartService, CartService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IAuthService, AuthService>();
 
@@ -72,17 +73,17 @@ public class Startup
         app.UseAuthorization();
 
         // Initialize the database using a scoped service
-        using (var serviceScope = app.ApplicationServices.CreateScope())
-        {
-            var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            DbInitializer.Initialize(context);
-        }
+        //using (var serviceScope = app.ApplicationServices.CreateScope())
+        //{
+        //    var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        //    DbInitializer.Initialize(context);
+        //}
 
         app.UseSwagger();
         app.UseSwaggerUI(c =>
         {
             c.SwaggerEndpoint("/swagger/v1/swagger.json", "RestaurantAPI v1");
-            c.RoutePrefix = string.Empty;
+            c.RoutePrefix = "swagger";
         });
 
         app.UseEndpoints(endpoints =>
