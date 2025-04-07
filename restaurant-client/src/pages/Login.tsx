@@ -1,12 +1,14 @@
 // src/pages/Login.tsx
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -15,14 +17,24 @@ const Login: React.FC = () => {
 
     try {
       const response = await axios.post('/api/auth/login', { email, password });
-      // Response should contain your JWT token (e.g., response.data.token)
       console.log('Login successful:', response.data);
-      // You might store the token in localStorage and redirect the user, for example:
-      localStorage.setItem('token', response.data.token);
-      // Redirect to a protected page if needed
-    } catch (err: any) {
-      console.error('Login error:', err);
-      setError(err.response?.data || 'Login failed');
+
+      // Деструктуризация ответа: токен и данные пользователя
+      const { token, user } = response.data;
+      localStorage.setItem('token', token);
+
+      // Редирект в зависимости от роли
+      if (user.role === 'Admin') {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data || 'Login failed');
+      } else {
+        setError('Login failed');
+      }
     } finally {
       setLoading(false);
     }

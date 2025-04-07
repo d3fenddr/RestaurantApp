@@ -1,4 +1,6 @@
 // src/App.tsx
+import AdminDashboard from './pages/AdminDashboard';
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Login from './pages/Login';
@@ -17,6 +19,7 @@ const App: React.FC = () => {
         <Route path="/" element={<DishesList />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </Router>
   );

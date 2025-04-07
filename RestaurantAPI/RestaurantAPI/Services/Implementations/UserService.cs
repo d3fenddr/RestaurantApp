@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RestaurantAPI.Data; // Assumes ApplicationDbContext is in this namespace
+using RestaurantAPI.Data; 
 using RestaurantAPI.DTOs;
 using RestaurantAPI.Models;
 using RestaurantAPI.Services.Interfaces;
@@ -29,7 +29,7 @@ namespace RestaurantAPI.Services.Implementations
                     Email = u.Email,
                     Role = u.Role,
                     CreatedAt = u.CreatedAt,
-                    Password = null // Never expose password hash in GET responses
+                    Password = null
                 })
                 .ToListAsync();
         }
@@ -112,6 +112,19 @@ namespace RestaurantAPI.Services.Implementations
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        // Метод Authenticate для проверки учетных данных
+        public async Task<User?> Authenticate(string email, string password)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null)
+                return null;
+
+            if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+                return null;
+
+            return user;
         }
     }
 }

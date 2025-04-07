@@ -1,47 +1,68 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using RestaurantAPI.DTO;
-using RestaurantAPI.Services;
+﻿using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using RestaurantAPI.Models;
+using RestaurantAPI.Services.Interfaces; 
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace RestaurantAPI.Controllers
 {
-    [Route("api/auth")]
     [ApiController]
+    [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthService _authService;
+        private readonly IUserService _userService;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IUserService userService, IConfiguration configuration)
         {
-            _authService = authService;
+            _userService = userService;
+            _configuration = configuration;
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterRequestDto request)
-        {
-            try
-            {
-                var message = await _authService.RegisterAsync(request);
-                return Ok(new { message });
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
+        // Метод логина
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginRequestDto request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest model)
         {
-            try
+            // Проверяем учетные данные
+            var user = await _userService.Authenticate(model.Email, model.Password);
+            if (user == null)
+                return Unauthorized("Invalid credentials");
+
+            // Генерируем JWT-токен
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
-                var token = await _authService.LoginAsync(request);
-                return Ok(new { token });
-            }
-            catch (UnauthorizedAccessException)
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, user.Id.ToString()),
+                    new Claim(ClaimTypes.Role, user.Role)
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+
+            // Возвращаем токен и данные пользователя
+            return Ok(new
             {
-                return Unauthorized("Invalid credentials.");
-            }
+                token = tokenString,
+                user = new
+                {
+                    id = user.Id,
+                    fullName = user.FullName,
+                    email = user.Email,
+                    role = user.Role
+                }
+            });
         }
     }
 }
