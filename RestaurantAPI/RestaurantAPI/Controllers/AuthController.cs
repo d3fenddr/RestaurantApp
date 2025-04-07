@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
+using RestaurantAPI.Data;
+using RestaurantAPI.DTO;
 using RestaurantAPI.Models;
-using RestaurantAPI.Services.Interfaces; 
+using RestaurantAPI.Services.Interfaces;
 using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace RestaurantAPI.Controllers
@@ -16,53 +14,61 @@ namespace RestaurantAPI.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IAuthService _authService;
+        private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
 
-        public AuthController(IUserService userService, IConfiguration configuration)
+        public AuthController(IAuthService authService, ApplicationDbContext context, IConfiguration configuration)
         {
-            _userService = userService;
+            _authService = authService;
+            _context = context;
             _configuration = configuration;
         }
 
-        // Метод логина
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest model)
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
         {
-            // Проверяем учетные данные
-            var user = await _userService.Authenticate(model.Email, model.Password);
-            if (user == null)
-                return Unauthorized("Invalid credentials");
-
-            // Генерируем JWT-токен
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
-            var tokenDescriptor = new SecurityTokenDescriptor
+            try
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, user.Id.ToString()),
-                    new Claim(ClaimTypes.Role, user.Role)
-                }),
-                Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
-
-            // Возвращаем токен и данные пользователя
-            return Ok(new
+                var result = await _authService.RegisterAsync(request);
+                return Ok(new { message = result });
+            }
+            catch (Exception ex)
             {
-                token = tokenString,
-                user = new
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
+        {
+            try
+            {
+                // Получаем токен через AuthService
+                var token = await _authService.LoginAsync(request);
+                // Находим пользователя по email, чтобы вернуть его данные
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+                if (user == null)
                 {
-                    id = user.Id,
-                    fullName = user.FullName,
-                    email = user.Email,
-                    role = user.Role
+                    return Unauthorized("Invalid credentials.");
                 }
-            });
+
+                return Ok(new
+                {
+                    token,
+                    user = new
+                    {
+                        id = user.Id,
+                        fullName = user.FullName,
+                        email = user.Email,
+                        role = user.Role
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized(ex.Message);
+            }
         }
     }
 }

@@ -3,7 +3,11 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const Login: React.FC = () => {
+interface LoginProps {
+  setUser: (user: any) => void;
+}
+
+const Login: React.FC<LoginProps> = ({ setUser }) => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
@@ -19,15 +23,19 @@ const Login: React.FC = () => {
       const response = await axios.post('/api/auth/login', { email, password });
       console.log('Login successful:', response.data);
 
-      // Деструктуризация ответа: токен и данные пользователя
+      // Ожидается, что сервер возвращает { token, user }
       const { token, user } = response.data;
       localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
 
-      // Редирект в зависимости от роли
+      // Обновляем состояние пользователя в App.tsx
+      setUser(user);
+
+      // Если роль админа – перенаправляем в админпанель, иначе в личный кабинет
       if (user.role === 'Admin') {
         navigate('/admin');
       } else {
-        navigate('/');
+        navigate('/profile');
       }
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
@@ -41,9 +49,9 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '0 auto' }}>
+    <div className="card form-container" style={{ maxWidth: '400px', margin: '0 auto' }}>
       <h1>Login</h1>
-      {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
+      {error && <p style={{ color: 'red', marginBottom: '1rem' }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '1rem' }}>
           <label>Email:</label>

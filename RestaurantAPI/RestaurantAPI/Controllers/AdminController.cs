@@ -43,8 +43,6 @@ namespace RestaurantAPI.Controllers
             if (newUser == null)
                 return BadRequest();
 
-            // Предполагается, что в поле PasswordHash передается пароль в открытом виде,
-            // его необходимо захэшировать перед сохранением.
             if (string.IsNullOrWhiteSpace(newUser.PasswordHash))
                 return BadRequest("Password is required.");
 
@@ -65,7 +63,7 @@ namespace RestaurantAPI.Controllers
             user.FullName = updatedUser.FullName;
             user.Email = updatedUser.Email;
             user.Role = updatedUser.Role;
-            // Если администратор обновляет пароль, можно добавить условие:
+
             if (!string.IsNullOrWhiteSpace(updatedUser.PasswordHash))
             {
                 user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(updatedUser.PasswordHash);
@@ -131,6 +129,17 @@ namespace RestaurantAPI.Controllers
             _context.Dishes.Remove(dish);
             await _context.SaveChangesAsync();
             return NoContent();
+        }
+
+        // ========= ORDERS =========
+        [HttpGet("orders")]
+        public async Task<IActionResult> GetOrders()
+        {
+            var orders = await _context.Orders
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Dish)
+                .ToListAsync();
+            return Ok(orders);
         }
     }
 }

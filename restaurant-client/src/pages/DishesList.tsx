@@ -1,9 +1,7 @@
 // src/pages/DishesList.tsx
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-// Define the type for a dish
 interface Dish {
   id: number;
   name: string;
@@ -19,7 +17,6 @@ const DishesList: React.FC = () => {
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
-    // Replace with your API endpoint if not using a proxy
     axios.get('/api/dishes')
       .then(response => {
         setDishes(response.data);
@@ -33,19 +30,19 @@ const DishesList: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading dishes...</div>;
+    return <div className="container"><p>Loading dishes...</p></div>;
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <div className="container"><p className="error">{error}</p></div>;
   }
 
   return (
-    <div>
+    <div className="container">
       <h1>Dishes</h1>
-      <ul>
+      <ul className="dish-list">
         {dishes.map(dish => (
-          <li key={dish.id}>
+          <li key={dish.id} className="dish-card">
             <h3>{dish.name}</h3>
             <img src={dish.imageUrl} alt={dish.name} width={150} />
             <p>{dish.description}</p>

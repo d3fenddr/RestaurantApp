@@ -28,12 +28,11 @@ const AdminDashboard: React.FC = () => {
   const [editDish, setEditDish] = useState<IDish | null>(null);
 
   // Состояния для добавления нового элемента
-  const [newUser, setNewUser] = useState({ fullName: '', email: '', role: '', password: '' });
+  const [newUser, setNewUser] = useState({ fullName: '', email: '', role: 'User', password: '' });
   const [newDish, setNewDish] = useState({ name: '', price: 0, description: '', imageUrl: '', dishCategoryId: 0 });
 
   const getToken = () => localStorage.getItem('token') || '';
 
-  // Функция для получения данных при переключении вкладок
   useEffect(() => {
     setError('');
     const token = getToken();
@@ -69,7 +68,6 @@ const AdminDashboard: React.FC = () => {
 
   // ===== Пользователи =====
 
-  // Удаление пользователя
   const handleDeleteUser = async (id: number) => {
     const token = getToken();
     try {
@@ -83,7 +81,6 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Редактирование пользователя (сохранение изменений)
   const handleUserUpdate = async () => {
     if (!editUser) return;
     const token = getToken();
@@ -103,7 +100,6 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Добавление нового пользователя
   const handleAddUser = async () => {
     const token = getToken();
     try {
@@ -118,7 +114,7 @@ const AdminDashboard: React.FC = () => {
       if (!res.ok) throw new Error(`Error: ${res.status}`);
       const addedUser = await res.json();
       setUsers(prev => [...prev, addedUser]);
-      setNewUser({ fullName: '', email: '', role: '', password: '' });
+      setNewUser({ fullName: '', email: '', role: 'User', password: '' });
     } catch (err) {
       console.error('Error adding user:', err);
     }
@@ -126,7 +122,6 @@ const AdminDashboard: React.FC = () => {
 
   // ===== Блюда =====
 
-  // Удаление блюда
   const handleDeleteDish = async (id: number) => {
     const token = getToken();
     try {
@@ -140,7 +135,6 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Редактирование блюда (сохранение изменений)
   const handleDishUpdate = async () => {
     if (!editDish) return;
     const token = getToken();
@@ -160,7 +154,6 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Добавление нового блюда
   const handleAddDish = async () => {
     const token = getToken();
     try {
@@ -182,36 +175,36 @@ const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '2rem' }}>
+    <div className="container">
       <h1>Admin Dashboard</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <div style={{ marginBottom: '1rem' }}>
+      {error && <p className="error">{error}</p>}
+      <div className="nav-buttons" style={{ marginBottom: '1rem' }}>
         <button onClick={() => setView('users')}>Users</button>
         <button onClick={() => setView('dishes')} style={{ marginLeft: '1rem' }}>Dishes</button>
       </div>
 
       {view === 'users' && (
-        <div>
+        <div className="card">
           <h2>List of Users</h2>
           {users.length === 0 ? (
             <p>No users found.</p>
           ) : (
-            <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+            <table className="data-table">
               <thead>
                 <tr>
-                  <th style={{ border: '1px solid #ccc', padding: '8px' }}>Full Name</th>
-                  <th style={{ border: '1px solid #ccc', padding: '8px' }}>Email</th>
-                  <th style={{ border: '1px solid #ccc', padding: '8px' }}>Role</th>
-                  <th style={{ border: '1px solid #ccc', padding: '8px' }}>Actions</th>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map(u => (
                   <tr key={u.id}>
-                    <td style={{ border: '1px solid #ccc', padding: '8px' }}>{u.fullName}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '8px' }}>{u.email}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '8px' }}>{u.role}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '8px' }}>
+                    <td>{u.fullName}</td>
+                    <td>{u.email}</td>
+                    <td>{u.role}</td>
+                    <td>
                       <button onClick={() => setEditUser(u)}>Edit</button>
                       <button onClick={() => handleDeleteUser(u.id)} style={{ marginLeft: '1rem' }}>Delete</button>
                     </td>
@@ -221,45 +214,77 @@ const AdminDashboard: React.FC = () => {
             </table>
           )}
 
-          {/* Форма редактирования пользователя */}
           {editUser && (
-            <div style={{ marginTop: '1rem', border: '1px solid #ccc', padding: '1rem' }}>
+            <div className="card edit-form">
               <h3>Edit User</h3>
-              <div>
+              <div className="form-group">
                 <label>Full Name:</label>
-                <input type="text" value={editUser.fullName} onChange={e => setEditUser({ ...editUser, fullName: e.target.value })} />
+                <input 
+                  type="text" 
+                  value={editUser.fullName} 
+                  onChange={e => setEditUser({ ...editUser, fullName: e.target.value })} 
+                />
               </div>
-              <div>
+              <div className="form-group">
                 <label>Email:</label>
-                <input type="text" value={editUser.email} onChange={e => setEditUser({ ...editUser, email: e.target.value })} />
+                <input 
+                  type="text" 
+                  value={editUser.email} 
+                  onChange={e => setEditUser({ ...editUser, email: e.target.value })} 
+                />
               </div>
-              <div>
+              <div className="form-group">
                 <label>Role:</label>
-                <input type="text" value={editUser.role} onChange={e => setEditUser({ ...editUser, role: e.target.value })} />
+                <select 
+                  value={editUser.role} 
+                  onChange={e => setEditUser({ ...editUser, role: e.target.value })}
+                >
+                  <option value="User">User</option>
+                  <option value="Admin">Admin</option>
+                </select>
               </div>
-              <button onClick={handleUserUpdate}>Save</button>
-              <button onClick={() => setEditUser(null)} style={{ marginLeft: '1rem' }}>Cancel</button>
+              <div className="form-actions">
+                <button onClick={handleUserUpdate}>Save</button>
+                <button onClick={() => setEditUser(null)} style={{ marginLeft: '1rem' }}>Cancel</button>
+              </div>
             </div>
           )}
 
-          {/* Форма добавления нового пользователя */}
-          <div style={{ marginTop: '2rem', border: '1px solid #ccc', padding: '1rem' }}>
+          <div className="card add-form">
             <h3>Add New User</h3>
-            <div>
+            <div className="form-group">
               <label>Full Name:</label>
-              <input type="text" value={newUser.fullName} onChange={e => setNewUser({ ...newUser, fullName: e.target.value })} />
+              <input 
+                type="text" 
+                value={newUser.fullName} 
+                onChange={e => setNewUser({ ...newUser, fullName: e.target.value })} 
+              />
             </div>
-            <div>
+            <div className="form-group">
               <label>Email:</label>
-              <input type="text" value={newUser.email} onChange={e => setNewUser({ ...newUser, email: e.target.value })} />
+              <input 
+                type="text" 
+                value={newUser.email} 
+                onChange={e => setNewUser({ ...newUser, email: e.target.value })} 
+              />
             </div>
-            <div>
+            <div className="form-group">
               <label>Role:</label>
-              <input type="text" value={newUser.role} onChange={e => setNewUser({ ...newUser, role: e.target.value })} />
+              <select 
+                value={newUser.role} 
+                onChange={e => setNewUser({ ...newUser, role: e.target.value })}
+              >
+                <option value="User">User</option>
+                <option value="Admin">Admin</option>
+              </select>
             </div>
-            <div>
+            <div className="form-group">
               <label>Password:</label>
-              <input type="password" value={newUser.password} onChange={e => setNewUser({ ...newUser, password: e.target.value })} />
+              <input 
+                type="password" 
+                value={newUser.password} 
+                onChange={e => setNewUser({ ...newUser, password: e.target.value })} 
+              />
             </div>
             <button onClick={handleAddUser}>Add User</button>
           </div>
@@ -267,25 +292,25 @@ const AdminDashboard: React.FC = () => {
       )}
 
       {view === 'dishes' && (
-        <div>
+        <div className="card">
           <h2>List of Dishes</h2>
           {dishes.length === 0 ? (
             <p>No dishes found.</p>
           ) : (
-            <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+            <table className="data-table">
               <thead>
                 <tr>
-                  <th style={{ border: '1px solid #ccc', padding: '8px' }}>Name</th>
-                  <th style={{ border: '1px solid #ccc', padding: '8px' }}>Price</th>
-                  <th style={{ border: '1px solid #ccc', padding: '8px' }}>Actions</th>
+                  <th>Name</th>
+                  <th>Price</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {dishes.map(d => (
                   <tr key={d.id}>
-                    <td style={{ border: '1px solid #ccc', padding: '8px' }}>{d.name}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '8px' }}>{d.price}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '8px' }}>
+                    <td>{d.name}</td>
+                    <td>{d.price}</td>
+                    <td>
                       <button onClick={() => setEditDish(d)}>Edit</button>
                       <button onClick={() => handleDeleteDish(d.id)} style={{ marginLeft: '1rem' }}>Delete</button>
                     </td>
@@ -295,57 +320,97 @@ const AdminDashboard: React.FC = () => {
             </table>
           )}
 
-          {/* Форма редактирования блюда */}
           {editDish && (
-            <div style={{ marginTop: '1rem', border: '1px solid #ccc', padding: '1rem' }}>
+            <div className="card edit-form">
               <h3>Edit Dish</h3>
-              <div>
+              <div className="form-group">
                 <label>Name:</label>
-                <input type="text" value={editDish.name} onChange={e => setEditDish({ ...editDish, name: e.target.value })} />
+                <input 
+                  type="text" 
+                  value={editDish.name} 
+                  onChange={e => setEditDish({ ...editDish, name: e.target.value })} 
+                />
               </div>
-              <div>
+              <div className="form-group">
                 <label>Price:</label>
-                <input type="number" value={editDish.price} onChange={e => setEditDish({ ...editDish, price: Number(e.target.value) })} />
+                <input 
+                  type="number" 
+                  value={editDish.price} 
+                  onChange={e => setEditDish({ ...editDish, price: Number(e.target.value) })} 
+                />
               </div>
-              <div>
+              <div className="form-group">
                 <label>Description:</label>
-                <input type="text" value={editDish.description} onChange={e => setEditDish({ ...editDish, description: e.target.value })} />
+                <input 
+                  type="text" 
+                  value={editDish.description} 
+                  onChange={e => setEditDish({ ...editDish, description: e.target.value })} 
+                />
               </div>
-              <div>
+              <div className="form-group">
                 <label>Image URL:</label>
-                <input type="text" value={editDish.imageUrl} onChange={e => setEditDish({ ...editDish, imageUrl: e.target.value })} />
+                <input 
+                  type="text" 
+                  value={editDish.imageUrl} 
+                  onChange={e => setEditDish({ ...editDish, imageUrl: e.target.value })} 
+                />
               </div>
-              <div>
+              <div className="form-group">
                 <label>Dish Category Id:</label>
-                <input type="number" value={editDish.dishCategoryId} onChange={e => setEditDish({ ...editDish, dishCategoryId: Number(e.target.value) })} />
+                <input 
+                  type="number" 
+                  value={editDish.dishCategoryId} 
+                  onChange={e => setEditDish({ ...editDish, dishCategoryId: Number(e.target.value) })} 
+                />
               </div>
-              <button onClick={handleDishUpdate}>Save</button>
-              <button onClick={() => setEditDish(null)} style={{ marginLeft: '1rem' }}>Cancel</button>
+              <div className="form-actions">
+                <button onClick={handleDishUpdate}>Save</button>
+                <button onClick={() => setEditDish(null)} style={{ marginLeft: '1rem' }}>Cancel</button>
+              </div>
             </div>
           )}
 
-          {/* Форма добавления нового блюда */}
-          <div style={{ marginTop: '2rem', border: '1px solid #ccc', padding: '1rem' }}>
+          <div className="card add-form">
             <h3>Add New Dish</h3>
-            <div>
+            <div className="form-group">
               <label>Name:</label>
-              <input type="text" value={newDish.name} onChange={e => setNewDish({ ...newDish, name: e.target.value })} />
+              <input 
+                type="text" 
+                value={newDish.name} 
+                onChange={e => setNewDish({ ...newDish, name: e.target.value })} 
+              />
             </div>
-            <div>
+            <div className="form-group">
               <label>Price:</label>
-              <input type="number" value={newDish.price} onChange={e => setNewDish({ ...newDish, price: Number(e.target.value) })} />
+              <input 
+                type="number" 
+                value={newDish.price} 
+                onChange={e => setNewDish({ ...newDish, price: Number(e.target.value) })} 
+              />
             </div>
-            <div>
+            <div className="form-group">
               <label>Description:</label>
-              <input type="text" value={newDish.description} onChange={e => setNewDish({ ...newDish, description: e.target.value })} />
+              <input 
+                type="text" 
+                value={newDish.description} 
+                onChange={e => setNewDish({ ...newDish, description: e.target.value })} 
+              />
             </div>
-            <div>
+            <div className="form-group">
               <label>Image URL:</label>
-              <input type="text" value={newDish.imageUrl} onChange={e => setNewDish({ ...newDish, imageUrl: e.target.value })} />
+              <input 
+                type="text" 
+                value={newDish.imageUrl} 
+                onChange={e => setNewDish({ ...newDish, imageUrl: e.target.value })} 
+              />
             </div>
-            <div>
+            <div className="form-group">
               <label>Dish Category Id:</label>
-              <input type="number" value={newDish.dishCategoryId} onChange={e => setNewDish({ ...newDish, dishCategoryId: Number(e.target.value) })} />
+              <input 
+                type="number" 
+                value={newDish.dishCategoryId} 
+                onChange={e => setNewDish({ ...newDish, dishCategoryId: Number(e.target.value) })} 
+              />
             </div>
             <button onClick={handleAddDish}>Add Dish</button>
           </div>

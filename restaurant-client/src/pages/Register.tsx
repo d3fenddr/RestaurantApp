@@ -20,7 +20,6 @@ const Register: React.FC = () => {
       const response = await axios.post('/api/auth/register', { fullName, email, password });
       console.log('Registration successful:', response.data);
       setSuccessMessage('Registration successful, please log in.');
-      // Optionally, clear the form or redirect the user to the login page
     } catch (err: any) {
       console.error('Registration error:', err);
       setError(err.response?.data || 'Registration failed');
@@ -30,14 +29,13 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '0 auto' }}>
+    <div className="card form-container" style={{ maxWidth: '400px', margin: '0 auto' }}>
       <h1>Register</h1>
-      {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
-      {successMessage && <div style={{ color: 'green', marginBottom: '1rem' }}>{successMessage}</div>}
+      {error && <p className="error" style={{ color: 'red', marginBottom: '1rem' }}>{error}</p>}
+      {successMessage && <p className="success" style={{ color: 'green', marginBottom: '1rem' }}>{successMessage}</p>}
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '1rem' }}>
+        <div className="form-group" style={{ marginBottom: '1rem' }}>
           <label>Full Name:</label>
-          <br />
           <input
             type="text"
             value={fullName}
@@ -46,9 +44,8 @@ const Register: React.FC = () => {
             style={{ width: '100%', padding: '0.5rem' }}
           />
         </div>
-        <div style={{ marginBottom: '1rem' }}>
+        <div className="form-group" style={{ marginBottom: '1rem' }}>
           <label>Email:</label>
-          <br />
           <input
             type="email"
             value={email}
@@ -57,9 +54,8 @@ const Register: React.FC = () => {
             style={{ width: '100%', padding: '0.5rem' }}
           />
         </div>
-        <div style={{ marginBottom: '1rem' }}>
+        <div className="form-group" style={{ marginBottom: '1rem' }}>
           <label>Password:</label>
-          <br />
           <input
             type="password"
             value={password}

@@ -4,74 +4,78 @@ using Microsoft.IdentityModel.Tokens;
 using RestaurantAPI.Data;
 using RestaurantAPI.DTO;
 using RestaurantAPI.Models;
+using RestaurantAPI.Services.Interfaces;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-public class AuthService : IAuthService
+namespace RestaurantAPI.Services.Implementations
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IConfiguration _configuration;
-
-    public AuthService(ApplicationDbContext context, IConfiguration configuration)
+    public class AuthService : IAuthService
     {
-        _context = context;
-        _configuration = configuration;
-    }
+        private readonly ApplicationDbContext _context;
+        private readonly IConfiguration _configuration;
 
-    public async Task<string> RegisterAsync(RegisterRequestDto request)
-    {
-        if (await _context.Users.AnyAsync(u => u.Email == request.Email))
+        public AuthService(ApplicationDbContext context, IConfiguration configuration)
         {
-            throw new ArgumentException("User already exists.");
+            _context = context;
+            _configuration = configuration;
         }
 
-        var user = new User
+        public async Task<string> RegisterAsync(RegisterRequestDto request)
         {
-            FullName = request.FullName,
-            Email = request.Email,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-            Role = "User"
-        };
+            if (await _context.Users.AnyAsync(u => u.Email == request.Email))
+            {
+                throw new ArgumentException("User already exists.");
+            }
 
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+            var user = new User
+            {
+                FullName = request.FullName,
+                Email = request.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                Role = "User" // По умолчанию создается обычный пользователь
+            };
 
-        return "User created successfully";
-    }
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
 
-    public async Task<string> LoginAsync(LoginRequestDto request)
-    {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
-        if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-        {
-            throw new UnauthorizedAccessException("Invalid credentials.");
+            return "User created successfully";
         }
 
-        return GenerateJwtToken(user);
-    }
-
-    private string GenerateJwtToken(User user)
-    {
-        var claims = new[]
+        public async Task<string> LoginAsync(LoginRequestDto request)
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Role)
-        };
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            {
+                throw new UnauthorizedAccessException("Invalid credentials.");
+            }
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        var token = new JwtSecurityToken(
-            _configuration["Jwt:Issuer"],
-            _configuration["Jwt:Audience"],
-            claims,
-            expires: DateTime.UtcNow.AddHours(3),
-            signingCredentials: credentials
-        );
+            return GenerateJwtToken(user);
+        }
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        private string GenerateJwtToken(User user)
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(3),
+                signingCredentials: credentials
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
     }
 }
