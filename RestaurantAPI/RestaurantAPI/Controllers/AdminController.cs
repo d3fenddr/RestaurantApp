@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using RestaurantAPI.Data;
 using RestaurantAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 
 namespace RestaurantAPI.Controllers
 {
@@ -18,6 +20,7 @@ namespace RestaurantAPI.Controllers
             _context = context;
         }
 
+        // ========= USERS =========
 
         [HttpGet("users")]
         public async Task<IActionResult> GetUsers()
@@ -34,6 +37,25 @@ namespace RestaurantAPI.Controllers
             return Ok(user);
         }
 
+        [HttpPost("users")]
+        public async Task<IActionResult> CreateUser([FromBody] User newUser)
+        {
+            if (newUser == null)
+                return BadRequest();
+
+            // Предполагается, что в поле PasswordHash передается пароль в открытом виде,
+            // его необходимо захэшировать перед сохранением.
+            if (string.IsNullOrWhiteSpace(newUser.PasswordHash))
+                return BadRequest("Password is required.");
+
+            newUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newUser.PasswordHash);
+            newUser.CreatedAt = DateTime.UtcNow;
+
+            _context.Users.Add(newUser);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetUser), new { id = newUser.Id }, newUser);
+        }
+
         [HttpPut("users/{id}")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] User updatedUser)
         {
@@ -43,6 +65,11 @@ namespace RestaurantAPI.Controllers
             user.FullName = updatedUser.FullName;
             user.Email = updatedUser.Email;
             user.Role = updatedUser.Role;
+            // Если администратор обновляет пароль, можно добавить условие:
+            if (!string.IsNullOrWhiteSpace(updatedUser.PasswordHash))
+            {
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(updatedUser.PasswordHash);
+            }
 
             await _context.SaveChangesAsync();
             return NoContent();
@@ -59,12 +86,24 @@ namespace RestaurantAPI.Controllers
             return NoContent();
         }
 
+        // ========= DISHES =========
 
         [HttpGet("dishes")]
         public async Task<IActionResult> GetDishes()
         {
             var dishes = await _context.Dishes.ToListAsync();
             return Ok(dishes);
+        }
+
+        [HttpPost("dishes")]
+        public async Task<IActionResult> CreateDish([FromBody] Dish newDish)
+        {
+            if (newDish == null)
+                return BadRequest();
+
+            _context.Dishes.Add(newDish);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetDishes), new { id = newDish.Id }, newDish);
         }
 
         [HttpPut("dishes/{id}")]
