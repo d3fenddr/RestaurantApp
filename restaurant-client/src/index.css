@@ -1,171 +1,231 @@
-/* index.css */
-
-/* Базовые стили и переменные */
-:root {
-  /* Цветовая схема для светлого режима */
-  --primary-bg: #ffffff;
-  --primary-text: #213547;
-  --link-color: #646cff;
-  --link-hover: #747bff;
-  --button-bg: #f9f9f9;
-  --card-bg: #f5f5f5;
-  --border-color: #ccc;
-  --error-color: red;
-  --success-color: green;
-
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color-scheme: light dark;
-}
-
-a {
-  font-weight: 500;
-  color: var(--link-color);
-  text-decoration: none;
-}
-
-a:hover {
-  color: var(--link-hover);
-}
-
-body {
+/* Общие сбросы и настройки */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  background-color: var(--primary-bg);
-  color: var(--primary-text);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
 }
 
-/* Основной контейнер */
+/* Корневые переменные – можно менять для тонкой настройки цветов и отступов */
+:root {
+  /* Цветовая схема */
+  --primary-bg: #ffffff;
+  --primary-text: #333333;
+  --accent-color: #007BFF;
+  --accent-hover: #0056b3;
+  --card-bg: #ffffff;
+  --border-color: #eaeaea;
+  --error-color: #d9534f;
+  --success-color: #5cb85c;
+
+  /* Типографика */
+  --font-family: 'Arial', sans-serif;
+
+  /* Отступы и размеры */
+  --base-spacing: 1rem;
+  --container-max-width: 1200px;
+}
+
+/* Настройка основных элементов */
+html,
+body {
+  background-color: var(--primary-bg);
+  color: var(--primary-text);
+  font-family: var(--font-family);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Глобальный контейнер для центровки содержимого */
 .container {
-  max-width: 1280px;
-  width: 100%;
-  padding: 2rem;
+  max-width: var(--container-max-width);
   margin: 0 auto;
+  padding: calc(var(--base-spacing) * 2);
   text-align: center;
 }
 
-/* Заголовки */
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-  margin-bottom: 1rem;
+/* Стили для ссылок */
+a {
+  text-decoration: none;
+  color: var(--accent-color);
+  transition: color 0.3s ease;
 }
 
-/* Карточки */
+a:hover {
+  color: var(--accent-hover);
+}
+
+/* Навигация */
+nav {
+  width: 100%;
+  padding: var(--base-spacing);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--base-spacing);
+}
+
+nav a {
+  margin-right: var(--base-spacing);
+}
+
+nav button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: var(--accent-color);
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+nav button:hover {
+  background-color: var(--accent-hover);
+}
+
+/* Заголовки */
+h1, h2, h3, h4, h5, h6 {
+  margin: 1rem 0;
+  font-weight: 600;
+}
+
+/* Карточки для отделённых блоков контента */
 .card {
   background-color: var(--card-bg);
   padding: 2rem;
   margin: 1rem auto;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
 }
 
-/* Таблицы */
+.card:hover {
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+}
+
+/* Таблицы данных */
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  margin: 1rem 0;
+  margin: 1.5rem 0;
 }
 
 .data-table th,
 .data-table td {
   border: 1px solid var(--border-color);
-  padding: 0.75rem;
+  padding: 1rem;
   text-align: left;
 }
 
-/* Формы */
+/* Контейнер формы – используется и на регистрации и других формах */
 .form-container {
   background-color: var(--card-bg);
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   max-width: 400px;
   margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
+/* Группы полей формы */
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   text-align: left;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: bold;
+  font-weight: 600;
 }
 
-.form-group input {
+.form-group input,
+.form-group textarea,
+.form-group select {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.75rem;
   border: 1px solid var(--border-color);
   border-radius: 4px;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: var(--accent-color);
+  outline: none;
 }
 
 /* Кнопки */
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  background-color: var(--button-bg);
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--accent-color);
+  color: #fff;
   cursor: pointer;
-  transition: border-color 0.25s;
-  margin: 0.25rem;
+  transition: background-color 0.3s ease;
 }
 
-button:hover {
-  border-color: var(--link-color);
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+button:hover:not(:disabled) {
+  background-color: var(--accent-hover);
 }
 
 /* Сообщения об ошибке и успехе */
 .error {
   color: var(--error-color);
+  font-weight: 500;
+  margin-bottom: var(--base-spacing);
 }
 
 .success {
   color: var(--success-color);
+  font-weight: 500;
+  margin-bottom: var(--base-spacing);
 }
 
-/* Стили для списка блюд */
+/* Стили для списка блюд (на главной странице) */
 .dish-list {
   list-style: none;
   padding: 0;
+  margin: 2rem auto;
   display: flex;
   flex-wrap: wrap;
+  gap: 1.5rem;
   justify-content: center;
 }
 
 .dish-card {
   background-color: var(--card-bg);
-  margin: 1rem;
+  width: 260px;
   padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   text-align: left;
-  width: 250px;
 }
 
-/* Медиа-запросы для темного режима */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --primary-bg: #242424;
-    --primary-text: rgba(255, 255, 255, 0.87);
-    --link-color: #646cff;
-    --link-hover: #535bf2;
-    --button-bg: #1a1a1a;
-    --card-bg: #333;
-    --border-color: #555;
+.dish-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+  nav {
+    flex-direction: column;
+  }
+
+  .form-container {
+    margin: 1rem;
+    width: 90%;
   }
 }
