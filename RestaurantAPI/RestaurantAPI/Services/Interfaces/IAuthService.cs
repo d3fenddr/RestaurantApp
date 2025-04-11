@@ -1,7 +1,13 @@
-﻿using RestaurantAPI.DTO;
+﻿using System.Threading.Tasks;
+using RestaurantAPI.DTO;
+using RestaurantAPI.Models;
 
-public interface IAuthService
+namespace RestaurantAPI.Services.Interfaces
 {
-    Task<string> RegisterAsync(RegisterRequestDto request);
-    Task<string> LoginAsync(LoginRequestDto request);
+    public interface IAuthService
+    {
+        Task<string> RegisterAsync(RegisterRequestDto request);
+        Task<AuthResponseDto> LoginAsync(LoginRequestDto request);
+        string RefreshAccessToken(User user);
+    }
 }

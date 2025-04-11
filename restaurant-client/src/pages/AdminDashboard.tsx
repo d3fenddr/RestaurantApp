@@ -1,4 +1,3 @@
-// src/pages/AdminDashboard.tsx
 import React, { useEffect, useState } from 'react';
 
 interface IUser {
@@ -23,11 +22,9 @@ const AdminDashboard: React.FC = () => {
   const [dishes, setDishes] = useState<IDish[]>([]);
   const [error, setError] = useState<string>('');
 
-  // Состояния для редактирования
   const [editUser, setEditUser] = useState<IUser | null>(null);
   const [editDish, setEditDish] = useState<IDish | null>(null);
 
-  // Состояния для добавления нового элемента
   const [newUser, setNewUser] = useState({ fullName: '', email: '', role: 'User', password: '' });
   const [newDish, setNewDish] = useState({ name: '', price: 0, description: '', imageUrl: '', dishCategoryId: 0 });
 
@@ -65,8 +62,6 @@ const AdminDashboard: React.FC = () => {
         });
     }
   }, [view]);
-
-  // ===== Пользователи =====
 
   const handleDeleteUser = async (id: number) => {
     const token = getToken();
@@ -119,8 +114,6 @@ const AdminDashboard: React.FC = () => {
       console.error('Error adding user:', err);
     }
   };
-
-  // ===== Блюда =====
 
   const handleDeleteDish = async (id: number) => {
     const token = getToken();

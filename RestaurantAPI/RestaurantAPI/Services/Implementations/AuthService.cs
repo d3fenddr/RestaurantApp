@@ -8,6 +8,7 @@ using RestaurantAPI.Services.Interfaces;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,7 +37,7 @@ namespace RestaurantAPI.Services.Implementations
                 FullName = request.FullName,
                 Email = request.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-                Role = "User" // По умолчанию создается обычный пользователь
+                Role = "User"
             };
 
             _context.Users.Add(user);
@@ -45,7 +46,7 @@ namespace RestaurantAPI.Services.Implementations
             return "User created successfully";
         }
 
-        public async Task<string> LoginAsync(LoginRequestDto request)
+        public async Task<AuthResponseDto> LoginAsync(LoginRequestDto request)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
             if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
@@ -53,7 +54,17 @@ namespace RestaurantAPI.Services.Implementations
                 throw new UnauthorizedAccessException("Invalid credentials.");
             }
 
-            return GenerateJwtToken(user);
+            var accessToken = GenerateJwtToken(user);
+            var refreshToken = GenerateRefreshToken(user.Id);
+
+            _context.RefreshTokens.Add(refreshToken);
+            await _context.SaveChangesAsync();
+
+            return new AuthResponseDto
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken.Token
+            };
         }
 
         private string GenerateJwtToken(User user)
@@ -67,15 +78,34 @@ namespace RestaurantAPI.Services.Implementations
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(3),
+                expires: DateTime.UtcNow.AddMinutes(1),
                 signingCredentials: credentials
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private RefreshToken GenerateRefreshToken(int userId)
+        {
+            var refreshToken = new RefreshToken
+            {
+                Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+                Expires = DateTime.UtcNow.AddMinutes(1),
+                Created = DateTime.UtcNow,
+                UserId = userId
+            };
+
+            return refreshToken;
+        }
+
+        public string RefreshAccessToken(User user)
+        {
+            return GenerateJwtToken(user);
         }
     }
 }

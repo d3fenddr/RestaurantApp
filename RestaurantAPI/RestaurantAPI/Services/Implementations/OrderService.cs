@@ -91,11 +91,9 @@ namespace RestaurantAPI.Services.Implementations
             if (order == null)
                 return false;
 
-            // Update basic order details
             order.UserId = orderDto.UserId;
             order.Total = orderDto.Total;
 
-            // For simplicity, remove existing items and add the new ones
             order.OrderItems.Clear();
             foreach (var item in orderDto.OrderItems)
             {

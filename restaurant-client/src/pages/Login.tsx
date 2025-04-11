@@ -1,4 +1,3 @@
-// src/pages/Login.tsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -20,23 +19,21 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
     setError('');
 
     try {
+      // IMPORTANT: API now returns { accessToken, refreshToken, user } – use accessToken
       const response = await axios.post('/api/auth/login', { email, password });
       console.log('Login successful:', response.data);
 
-      // Ожидается, что сервер возвращает { token, user }
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
+      const { accessToken, user } = response.data;
+      localStorage.setItem('token', accessToken);
       localStorage.setItem('user', JSON.stringify(user));
 
-      // Обновляем состояние пользователя в App.tsx
-      setUser(user);
-
-      // Если роль админа – перенаправляем в админпанель, иначе в личный кабинет
+      // If admin, navigate to admin panel, otherwise to profile
       if (user.role === 'Admin') {
         navigate('/admin');
       } else {
         navigate('/profile');
       }
+      setUser(user);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         setError(err.response?.data || 'Login failed');

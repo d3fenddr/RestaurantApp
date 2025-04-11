@@ -72,7 +72,6 @@ public class Startup
         app.UseAuthentication();
         app.UseAuthorization();
 
-        // Initialize the database using a scoped service
         using (var serviceScope = app.ApplicationServices.CreateScope())
         {
             var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();

@@ -13,7 +13,7 @@ const Navigation: React.FC<{ user: any; setUser: (user: any) => void }> = ({ use
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
-    navigate("/"); // Перенаправление на главную страницу после выхода
+    navigate("/");
   };
 
   return (

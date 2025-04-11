@@ -35,7 +35,7 @@ namespace RestaurantAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { error = ex.Message });
             }
         }
 
@@ -44,9 +44,8 @@ namespace RestaurantAPI.Controllers
         {
             try
             {
-                // Получаем токен через AuthService
-                var token = await _authService.LoginAsync(request);
-                // Находим пользователя по email, чтобы вернуть его данные
+                // Get tokens and user data.
+                var authResponse = await _authService.LoginAsync(request);
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
                 if (user == null)
                 {
@@ -55,7 +54,8 @@ namespace RestaurantAPI.Controllers
 
                 return Ok(new
                 {
-                    token,
+                    accessToken = authResponse.AccessToken,
+                    refreshToken = authResponse.RefreshToken,
                     user = new
                     {
                         id = user.Id,
@@ -67,8 +67,29 @@ namespace RestaurantAPI.Controllers
             }
             catch (Exception ex)
             {
-                return Unauthorized(ex.Message);
+                return Unauthorized(new { error = ex.Message });
             }
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshRequestDto request)
+        {
+            // Find the stored refresh token in the database (including the related user).
+            var storedToken = await _context.RefreshTokens
+                .Include(rt => rt.User)
+                .FirstOrDefaultAsync(rt => rt.Token == request.RefreshToken);
+
+            if (storedToken == null || !storedToken.IsActive)
+            {
+                return Unauthorized("Invalid or expired refresh token.");
+            }
+
+            // Optionally: revoke the used refresh token and generate a new one if implementing token rotation.
+
+            // Generate a new access token.
+            var newAccessToken = _authService.RefreshAccessToken(storedToken.User);
+
+            return Ok(new { accessToken = newAccessToken });
         }
     }
 }

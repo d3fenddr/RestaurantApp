@@ -34,7 +34,6 @@ namespace RestaurantAPI.Services.Implementations
 
         public async Task<CartItemDto> AddCartItemAsync(CartItemDto cartItemDto)
         {
-            // If the same dish already exists in the user's cart, update quantity.
             var existingItem = await _context.CartItems
                 .FirstOrDefaultAsync(ci => ci.UserId == cartItemDto.UserId && ci.DishId == cartItemDto.DishId);
 

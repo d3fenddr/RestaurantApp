@@ -1,8 +1,6 @@
-// src/pages/Profile.tsx
 import React from 'react';
 
 const Profile: React.FC = () => {
-  // Получаем пользователя из localStorage
   const userStr = localStorage.getItem('user');
   const user = userStr ? JSON.parse(userStr) : null;
 
@@ -16,7 +14,6 @@ const Profile: React.FC = () => {
       <p><strong>Full Name:</strong> {user.fullName}</p>
       <p><strong>Email:</strong> {user.email}</p>
       <p><strong>Role:</strong> {user.role}</p>
-      {/* Дополнительно можно добавить кнопку для редактирования профиля */}
     </div>
   );
 };

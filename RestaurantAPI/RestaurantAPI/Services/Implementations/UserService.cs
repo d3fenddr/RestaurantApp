@@ -114,7 +114,6 @@ namespace RestaurantAPI.Services.Implementations
             return true;
         }
 
-        // Метод Authenticate для проверки учетных данных
         public async Task<User?> Authenticate(string email, string password)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
