@@ -18,11 +18,15 @@ namespace RestaurantAPI.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
 
-        public AuthController(IAuthService authService, ApplicationDbContext context, IConfiguration configuration)
+        // Optionally, inject IWebHostEnvironment if you want dynamic Secure flag.
+        private readonly IWebHostEnvironment _env;
+
+        public AuthController(IAuthService authService, ApplicationDbContext context, IConfiguration configuration, IWebHostEnvironment env)
         {
             _authService = authService;
             _context = context;
             _configuration = configuration;
+            _env = env;
         }
 
         [HttpPost("register")]
@@ -44,7 +48,6 @@ namespace RestaurantAPI.Controllers
         {
             try
             {
-                // Get tokens and user data.
                 var authResponse = await _authService.LoginAsync(request);
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
                 if (user == null)
@@ -52,10 +55,29 @@ namespace RestaurantAPI.Controllers
                     return Unauthorized("Invalid credentials.");
                 }
 
+                // Set cookies. For development, set Secure = false.
+                bool isDev = _env.IsDevelopment();
+
+                var accessTokenCookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = !isDev,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddMinutes(1)
+                };
+                Response.Cookies.Append("accessToken", authResponse.AccessToken, accessTokenCookieOptions);
+
+                var refreshTokenCookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = !isDev,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddMinutes(1)
+                };
+                Response.Cookies.Append("refreshToken", authResponse.RefreshToken, refreshTokenCookieOptions);
+
                 return Ok(new
                 {
-                    accessToken = authResponse.AccessToken,
-                    refreshToken = authResponse.RefreshToken,
                     user = new
                     {
                         id = user.Id,
@@ -72,22 +94,33 @@ namespace RestaurantAPI.Controllers
         }
 
         [HttpPost("refresh")]
-        public async Task<IActionResult> Refresh([FromBody] RefreshRequestDto request)
+        public async Task<IActionResult> Refresh()
         {
-            // Find the stored refresh token in the database (including the related user).
+            // Read refresh token from cookie.
+            if (!Request.Cookies.TryGetValue("refreshToken", out string refreshToken))
+            {
+                return Unauthorized("Refresh token not found.");
+            }
+
             var storedToken = await _context.RefreshTokens
                 .Include(rt => rt.User)
-                .FirstOrDefaultAsync(rt => rt.Token == request.RefreshToken);
+                .FirstOrDefaultAsync(rt => rt.Token == refreshToken);
 
             if (storedToken == null || !storedToken.IsActive)
             {
                 return Unauthorized("Invalid or expired refresh token.");
             }
 
-            // Optionally: revoke the used refresh token and generate a new one if implementing token rotation.
-
-            // Generate a new access token.
             var newAccessToken = _authService.RefreshAccessToken(storedToken.User);
+            bool isDev = _env.IsDevelopment();
+            var accessTokenCookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = !isDev,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddMinutes(1)
+            };
+            Response.Cookies.Append("accessToken", newAccessToken, accessTokenCookieOptions);
 
             return Ok(new { accessToken = newAccessToken });
         }

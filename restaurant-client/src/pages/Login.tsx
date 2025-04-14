@@ -19,28 +19,30 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
     setError('');
 
     try {
-      // IMPORTANT: API now returns { accessToken, refreshToken, user } – use accessToken
-      const response = await axios.post('/api/auth/login', { email, password });
+      // withCredentials ensures cookies are sent/received.
+      const response = await axios.post('/api/auth/login', { email, password }, { withCredentials: true });
       console.log('Login successful:', response.data);
 
-      const { accessToken, user } = response.data;
-      localStorage.setItem('token', accessToken);
+      // Server returns only the user data; tokens are in HttpOnly cookies.
+      const { user } = response.data;
       localStorage.setItem('user', JSON.stringify(user));
+      setUser(user);
 
-      // If admin, navigate to admin panel, otherwise to profile
       if (user.role === 'Admin') {
         navigate('/admin');
       } else {
         navigate('/profile');
       }
-      setUser(user);
-    } catch (err: unknown) {
+    }
+    catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         setError(err.response?.data || 'Login failed');
-      } else {
+      }
+      else {
         setError('Login failed');
       }
-    } finally {
+    }
+    finally {
       setLoading(false);
     }
   };
@@ -53,24 +55,12 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
         <div style={{ marginBottom: '1rem' }}>
           <label>Email:</label>
           <br />
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-            style={{ width: '100%', padding: '0.5rem' }}
-          />
+          <input type="email" value={email} onChange={e => setEmail(e.target.value)} required style={{ width: '100%', padding: '0.5rem' }} />
         </div>
         <div style={{ marginBottom: '1rem' }}>
           <label>Password:</label>
           <br />
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-            style={{ width: '100%', padding: '0.5rem' }}
-          />
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} required style={{ width: '100%', padding: '0.5rem' }} />
         </div>
         <button type="submit" disabled={loading} style={{ padding: '0.5rem 1rem' }}>
           {loading ? 'Logging in...' : 'Login'}

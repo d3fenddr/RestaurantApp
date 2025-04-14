@@ -1,4 +1,3 @@
-// src/pages/DishesList.tsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -17,7 +16,7 @@ const DishesList: React.FC = () => {
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
-    axios.get('/api/dishes')
+    axios.get('/api/dishes', { withCredentials: true })
       .then(response => {
         setDishes(response.data);
         setLoading(false);

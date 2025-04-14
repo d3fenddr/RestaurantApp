@@ -10,7 +10,6 @@ const Navigation: React.FC<{ user: any; setUser: (user: any) => void }> = ({ use
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
     navigate("/");

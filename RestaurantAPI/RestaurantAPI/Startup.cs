@@ -1,33 +1,48 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using RestaurantAPI.Data;
 using RestaurantAPI.Services.Implementations;
 using RestaurantAPI.Services.Interfaces;
 using System.Text;
+using System.Threading.Tasks;
 
 public class Startup
 {
     private readonly IConfiguration _configuration;
+    private readonly IWebHostEnvironment _env;
 
-    public Startup(IConfiguration configuration)
+    public Startup(IConfiguration configuration, IWebHostEnvironment env)
     {
         _configuration = configuration;
+        _env = env;
     }
 
     public void ConfigureServices(IServiceCollection services)
     {
+        // Database connection
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
 
         services.AddControllers();
 
+        // Configure CORS: allow the front-end and credentials.
         services.AddCors(options =>
         {
-            options.AddPolicy("AllowFrontend",
-                builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            options.AddPolicy("AllowFrontend", builder =>
+                builder.WithOrigins("http://localhost:5173")  // <-- Change to your client origin
+                       .AllowAnyMethod()
+                       .AllowAnyHeader()
+                       .AllowCredentials());
         });
 
+        // Register your application services.
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IDishService, DishService>();
         services.AddScoped<ICategoryService, CategoryService>();
@@ -35,22 +50,42 @@ public class Startup
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IAuthService, AuthService>();
 
-        // JWT Authentication
+        // Configure JWT authentication: read token from cookie "accessToken".
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                options.RequireHttpsMetadata = false;
+                // Read JWT from cookie.
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var token = context.Request.Cookies["accessToken"];
+                        if (!string.IsNullOrEmpty(token))
+                        {
+                            context.Token = token;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
+                options.RequireHttpsMetadata = !_env.IsDevelopment(); // For development, allow HTTP.
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["Jwt:Key"])),
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["Jwt:Key"])),
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
             });
 
         services.AddAuthorization();
+
+        // Optional: Configure cookie policy.
+        services.AddCookiePolicy(options =>
+        {
+            options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.Strict;
+        });
 
         services.AddSwaggerGen(c =>
         {
@@ -66,12 +101,17 @@ public class Startup
         }
 
         app.UseCors("AllowFrontend");
-
         app.UseRouting();
+
+        app.UseCookiePolicy(new CookiePolicyOptions
+        {
+            MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.Strict
+        });
 
         app.UseAuthentication();
         app.UseAuthorization();
 
+        // If needed, initialize your database here.
         using (var serviceScope = app.ApplicationServices.CreateScope())
         {
             var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();

@@ -16,8 +16,7 @@ const Register: React.FC = () => {
     setSuccessMessage('');
 
     try {
-      const response = await axios.post('/api/auth/register', { fullName, email, password });
-      console.log('Registration successful:', response.data);
+      await axios.post('/api/auth/register', { fullName, email, password }, { withCredentials: true });
       setSuccessMessage('Registration successful, please log in.');
     } catch (err: any) {
       console.error('Registration error:', err);
@@ -35,33 +34,15 @@ const Register: React.FC = () => {
       <form onSubmit={handleSubmit}>
         <div className="form-group" style={{ marginBottom: '1rem' }}>
           <label>Full Name:</label>
-          <input
-            type="text"
-            value={fullName}
-            onChange={e => setFullName(e.target.value)}
-            required
-            style={{ width: '100%', padding: '0.5rem' }}
-          />
+          <input type="text" value={fullName} onChange={e => setFullName(e.target.value)} required style={{ width: '100%', padding: '0.5rem' }} />
         </div>
         <div className="form-group" style={{ marginBottom: '1rem' }}>
           <label>Email:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-            style={{ width: '100%', padding: '0.5rem' }}
-          />
+          <input type="email" value={email} onChange={e => setEmail(e.target.value)} required style={{ width: '100%', padding: '0.5rem' }} />
         </div>
         <div className="form-group" style={{ marginBottom: '1rem' }}>
           <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-            style={{ width: '100%', padding: '0.5rem' }}
-          />
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} required style={{ width: '100%', padding: '0.5rem' }} />
         </div>
         <button type="submit" disabled={loading} style={{ padding: '0.5rem 1rem' }}>
           {loading ? 'Registering...' : 'Register'}
