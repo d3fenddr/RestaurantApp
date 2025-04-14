@@ -55,9 +55,9 @@ namespace RestaurantAPI.Controllers
                     return Unauthorized("Invalid credentials.");
                 }
 
-                // Set cookies. For development, set Secure = false.
                 bool isDev = _env.IsDevelopment();
 
+                // Set the HTTP-only token cookies.
                 var accessTokenCookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
@@ -76,6 +76,17 @@ namespace RestaurantAPI.Controllers
                 };
                 Response.Cookies.Append("refreshToken", authResponse.RefreshToken, refreshTokenCookieOptions);
 
+                // Also set a non-HTTP-only cookie for the refresh token expiration time.
+                var refreshTokenExpireCookieOptions = new CookieOptions
+                {
+                    HttpOnly = false, // Make it accessible via JavaScript.
+                    Secure = !isDev,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddMinutes(1)
+                };
+                // Send the expiration timestamp as ISO string (or any agreed format).
+                Response.Cookies.Append("refreshTokenExpire", DateTime.UtcNow.AddMinutes(1).ToString("o"), refreshTokenExpireCookieOptions);
+
                 return Ok(new
                 {
                     user = new
@@ -92,6 +103,7 @@ namespace RestaurantAPI.Controllers
                 return Unauthorized(new { error = ex.Message });
             }
         }
+
 
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh()
