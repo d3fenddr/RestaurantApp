@@ -21,6 +21,18 @@ const adminAPI = axios.create({
   withCredentials: true,
 });
 
+adminAPI.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const getUsers = async (): Promise<IUser[]> => {
   const response = await adminAPI.get('/users');
   return response.data;

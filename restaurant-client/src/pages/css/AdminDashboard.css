@@ -1,0 +1,115 @@
+.admin-dashboard {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+  
+  .admin-dashboard h1,
+  .admin-dashboard h2,
+  .admin-dashboard h3 {
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+  }
+  
+  .admin-dashboard .tab-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .admin-dashboard .tab-buttons button {
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--accent-color);
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .admin-dashboard .tab-buttons button:hover {
+    background-color: var(--accent-hover);
+    transform: scale(1.03);
+  }
+  
+  .admin-dashboard ul {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+  }
+  
+  .admin-dashboard li {
+    background-color: #ffffffcc;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .admin-dashboard li button {
+    background-color: #d9534f;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    color: #fff;
+    border: none;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .admin-dashboard li button:hover {
+    background-color: #c9302c;
+  }
+  
+  .admin-dashboard li button:first-of-type {
+    background-color: #5cb85c;
+  }
+  
+  .admin-dashboard li button:first-of-type:hover {
+    background-color: #449d44;
+  }
+  
+  .admin-dashboard input,
+  .admin-dashboard select {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+  
+  .admin-dashboard .form-section {
+    margin-top: 2rem;
+    background-color: #ffffffcc;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1.5rem;
+  }
+  
+  .admin-dashboard .form-section h3 {
+    margin-bottom: 1rem;
+  }
+  
+  .admin-dashboard .form-section button {
+    margin-top: 0.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    .admin-dashboard li {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+  

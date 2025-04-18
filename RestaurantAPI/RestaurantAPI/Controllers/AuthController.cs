@@ -17,8 +17,6 @@ namespace RestaurantAPI.Controllers
         private readonly IAuthService _authService;
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
-
-        // Optionally, inject IWebHostEnvironment if you want dynamic Secure flag.
         private readonly IWebHostEnvironment _env;
 
         public AuthController(IAuthService authService, ApplicationDbContext context, IConfiguration configuration, IWebHostEnvironment env)
@@ -57,35 +55,32 @@ namespace RestaurantAPI.Controllers
 
                 bool isDev = _env.IsDevelopment();
 
-                // Set the HTTP-only token cookies.
-                var accessTokenCookieOptions = new CookieOptions
+                var accessTokenExpire = DateTime.UtcNow.AddMinutes(15);
+                var refreshTokenExpire = DateTime.UtcNow.AddDays(7);
+
+                Response.Cookies.Append("accessToken", authResponse.AccessToken, new CookieOptions
                 {
                     HttpOnly = true,
                     Secure = !isDev,
                     SameSite = SameSiteMode.Strict,
-                    Expires = DateTime.UtcNow.AddMinutes(1)
-                };
-                Response.Cookies.Append("accessToken", authResponse.AccessToken, accessTokenCookieOptions);
+                    Expires = accessTokenExpire
+                });
 
-                var refreshTokenCookieOptions = new CookieOptions
+                Response.Cookies.Append("refreshToken", authResponse.RefreshToken, new CookieOptions
                 {
                     HttpOnly = true,
                     Secure = !isDev,
                     SameSite = SameSiteMode.Strict,
-                    Expires = DateTime.UtcNow.AddMinutes(1)
-                };
-                Response.Cookies.Append("refreshToken", authResponse.RefreshToken, refreshTokenCookieOptions);
+                    Expires = refreshTokenExpire
+                });
 
-                // Also set a non-HTTP-only cookie for the refresh token expiration time.
-                var refreshTokenExpireCookieOptions = new CookieOptions
+                Response.Cookies.Append("refreshTokenExpire", refreshTokenExpire.ToString("o"), new CookieOptions
                 {
-                    HttpOnly = false, // Make it accessible via JavaScript.
+                    HttpOnly = false,
                     Secure = !isDev,
                     SameSite = SameSiteMode.Strict,
-                    Expires = DateTime.UtcNow.AddMinutes(1)
-                };
-                // Send the expiration timestamp as ISO string (or any agreed format).
-                Response.Cookies.Append("refreshTokenExpire", DateTime.UtcNow.AddMinutes(1).ToString("o"), refreshTokenExpireCookieOptions);
+                    Expires = refreshTokenExpire
+                });
 
                 return Ok(new
                 {
@@ -104,11 +99,9 @@ namespace RestaurantAPI.Controllers
             }
         }
 
-
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh()
         {
-            // Read refresh token from cookie.
             if (!Request.Cookies.TryGetValue("refreshToken", out string refreshToken))
             {
                 return Unauthorized("Refresh token not found.");
@@ -125,14 +118,14 @@ namespace RestaurantAPI.Controllers
 
             var newAccessToken = _authService.RefreshAccessToken(storedToken.User);
             bool isDev = _env.IsDevelopment();
-            var accessTokenCookieOptions = new CookieOptions
+
+            Response.Cookies.Append("accessToken", newAccessToken, new CookieOptions
             {
                 HttpOnly = true,
                 Secure = !isDev,
                 SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddMinutes(1)
-            };
-            Response.Cookies.Append("accessToken", newAccessToken, accessTokenCookieOptions);
+                Expires = DateTime.UtcNow.AddMinutes(15)
+            });
 
             return Ok(new { accessToken = newAccessToken });
         }

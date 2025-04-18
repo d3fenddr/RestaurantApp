@@ -1,30 +1,27 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import './css/Login.css';
 
-interface LoginProps {
-  setUser: (user: any) => void;
-}
+const Login: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-const Login: React.FC<LoginProps> = ({ setUser }) => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { setUser } = useAuth();
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      // withCredentials ensures cookies are sent/received.
       const response = await axios.post('/api/auth/login', { email, password }, { withCredentials: true });
-      console.log('Login successful:', response.data);
+      const user = response.data.user;
 
-      // Server returns only the user data; tokens are in HttpOnly cookies.
-      const { user } = response.data;
       localStorage.setItem('user', JSON.stringify(user));
       setUser(user);
 
@@ -33,36 +30,38 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
       } else {
         navigate('/profile');
       }
-    }
-    catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        setError(err.response?.data || 'Login failed');
-      }
-      else {
-        setError('Login failed');
-      }
-    }
-    finally {
+    } catch (err: any) {
+      console.error('Login error:', err);
+      setError(err.response?.data?.error || 'Login failed');
+    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="card form-container" style={{ maxWidth: '400px', margin: '0 auto' }}>
+    <div className="card form-container login">
       <h1>Login</h1>
-      {error && <p style={{ color: 'red', marginBottom: '1rem' }}>{error}</p>}
+      {error && <p className="error">{error}</p>}
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '1rem' }}>
+        <div className="form-group">
           <label>Email:</label>
-          <br />
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)} required style={{ width: '100%', padding: '0.5rem' }} />
+          <input
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+          />
         </div>
-        <div style={{ marginBottom: '1rem' }}>
+        <div className="form-group">
           <label>Password:</label>
-          <br />
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} required style={{ width: '100%', padding: '0.5rem' }} />
+          <input
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required
+          />
         </div>
-        <button type="submit" disabled={loading} style={{ padding: '0.5rem 1rem' }}>
+        <button type="submit" disabled={loading}>
           {loading ? 'Logging in...' : 'Login'}
         </button>
       </form>
