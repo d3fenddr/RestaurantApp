@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RestaurantAPI.Data; 
+using RestaurantAPI.Data;
 using RestaurantAPI.DTOs;
 using RestaurantAPI.Models;
 using RestaurantAPI.Services.Interfaces;
@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RestaurantAPI.DTO;
 
 namespace RestaurantAPI.Services.Implementations
 {
@@ -124,6 +125,37 @@ namespace RestaurantAPI.Services.Implementations
                 return null;
 
             return user;
+        }
+
+        public async Task<ChangePasswordResult> ChangePasswordAsync(int userId, string oldPassword, string newPassword)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return new ChangePasswordResult
+                {
+                    Success = false,
+                    Message = "User not found."
+                };
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(oldPassword, user.PasswordHash))
+            {
+                return new ChangePasswordResult
+                {
+                    Success = false,
+                    Message = "Old password is incorrect."
+                };
+            }
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            await _context.SaveChangesAsync();
+
+            return new ChangePasswordResult
+            {
+                Success = true,
+                Message = "Password changed successfully."
+            };
         }
     }
 }

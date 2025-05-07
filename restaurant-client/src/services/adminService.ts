@@ -68,3 +68,14 @@ export const addDish = async (newDish: any): Promise<IDish> => {
   const response = await adminAPI.post('/dishes', newDish);
   return response.data;
 };
+
+export const changePassword = async (
+  oldPassword: string,
+  newPassword: string
+): Promise<void> => {
+  await axios.post(
+    '/api/users/change-password',
+    { oldPassword, newPassword },
+    { withCredentials: true }
+  );
+};

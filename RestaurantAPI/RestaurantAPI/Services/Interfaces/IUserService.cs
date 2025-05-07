@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RestaurantAPI.Models;
+using RestaurantAPI.DTO;
 
 namespace RestaurantAPI.Services.Interfaces
 {
@@ -13,5 +14,6 @@ namespace RestaurantAPI.Services.Interfaces
         Task<bool> UpdateUserAsync(int id, UserDto userDto);
         Task<bool> DeleteUserAsync(int id);
         Task<User> Authenticate(string email, string password);
+        Task<ChangePasswordResult> ChangePasswordAsync(int userId, string oldPassword, string newPassword);
     }
 }

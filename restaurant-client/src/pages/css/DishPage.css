@@ -1,0 +1,25 @@
+/* DishPage.css */
+.dish-page {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .dish-page img {
+    border-radius: 10px;
+    max-width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .dish-page input {
+    width: 100px;
+    padding: 0.5rem;
+    margin-right: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+  }

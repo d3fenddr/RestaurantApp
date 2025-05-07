@@ -5,6 +5,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import DishesList from './pages/DishesList';
+import DishPage from './pages/DishPage';
+import CartPage from './pages/CartPage';
 import { AuthProvider } from './context/AuthContext';
 
 function App() {
@@ -18,6 +20,8 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin-user" element={<Profile />} />
+        <Route path="/dish/:id" element={<DishPage />} />
+        <Route path="/cart" element={<CartPage />} />
       </Routes>
     </AuthProvider>
   );

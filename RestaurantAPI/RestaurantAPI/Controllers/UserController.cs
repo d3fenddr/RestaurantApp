@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using RestaurantAPI.DTO;
 using RestaurantAPI.DTOs;
 using RestaurantAPI.Services.Interfaces;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace RestaurantAPI.Controllers
@@ -64,6 +67,26 @@ namespace RestaurantAPI.Controllers
                 return NotFound();
 
             return NoContent();
+        }
+
+        // POST: api/users/change-password
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized("Token is missing or invalid.");
+
+            if (!int.TryParse(userIdClaim.Value, out int userId))
+                return Unauthorized("Invalid user ID in token.");
+
+            var result = await _userService.ChangePasswordAsync(userId, dto.OldPassword, dto.NewPassword);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            return Ok("Password changed successfully.");
         }
     }
 }
