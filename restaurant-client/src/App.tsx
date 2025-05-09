@@ -14,6 +14,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Terms from './pages/Terms';
 import Home from './pages/Home';
+import ForgotPassword from './pages/ForgotPassword';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <Route path="/dish/:id" element={<DishPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />

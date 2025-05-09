@@ -1,70 +1,57 @@
-import React, { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import axios from 'axios';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 
 const ResetPassword: React.FC = () => {
-  const [params] = useSearchParams();
-  const navigate = useNavigate();
-  const token = params.get('token');
-
-  const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
+  const [searchParams] = useSearchParams();
+  const [newPassword, setNewPassword] = useState('');
+  const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
 
-  const handleReset = async (e: React.FormEvent) => {
+  const token = searchParams.get('token');
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setMessage('');
     setError('');
-    setSuccess('');
 
-    if (password !== confirm) {
-      setError('Пароли не совпадают');
+    if (!token) {
+      setError('Token is missing');
       return;
     }
 
     try {
       await axios.post('/api/auth/reset-password', {
         token,
-        newPassword: password
+        newPassword,
       });
-      setSuccess('Пароль успешно изменён');
-      setTimeout(() => navigate('/login'), 3000);
+
+      setMessage('Password has been reset successfully.');
+      setTimeout(() => {
+        navigate('/login');
+      }, 500);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Ошибка при сбросе пароля');
+      setError(err.response?.data?.message || 'Reset failed.');
     }
   };
 
-  useEffect(() => {
-    if (!token) {
-      setError('Токен отсутствует');
-    }
-  }, [token]);
-
   return (
-    <div className="card form-container" style={{ maxWidth: '400px', margin: '0 auto' }}>
-      <h1>Сброс пароля</h1>
-      {error && <p className="error" style={{ color: 'red' }}>{error}</p>}
-      {success && <p className="success" style={{ color: 'green' }}>{success}</p>}
-      <form onSubmit={handleReset}>
-        <div className="form-group" style={{ marginBottom: '1rem' }}>
-          <label>Новый пароль:</label>
+    <div className="card form-container">
+      <h2>Reset Password</h2>
+      {message && <p style={{ color: 'green' }}>{message}</p>}
+      {error && <p className="error">{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>New Password:</label>
           <input
             type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
+            value={newPassword}
+            onChange={e => setNewPassword(e.target.value)}
             required
           />
         </div>
-        <div className="form-group" style={{ marginBottom: '1rem' }}>
-          <label>Повторите пароль:</label>
-          <input
-            type="password"
-            value={confirm}
-            onChange={e => setConfirm(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Сменить пароль</button>
+        <button type="submit">Reset Password</button>
       </form>
     </div>
   );

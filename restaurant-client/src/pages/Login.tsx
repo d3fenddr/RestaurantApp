@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './css/Login.css';
 
@@ -64,6 +64,9 @@ const Login: React.FC = () => {
         <button type="submit" disabled={loading}>
           {loading ? 'Logging in...' : 'Login'}
         </button>
+        <div style={{ marginTop: '10px' }}>
+          <Link to="/forgot-password">Forgot password?</Link>
+        </div>
       </form>
     </div>
   );

@@ -59,3 +59,9 @@
 .modal-body button:hover {
   background-color: var(--accent-hover);
 }
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}

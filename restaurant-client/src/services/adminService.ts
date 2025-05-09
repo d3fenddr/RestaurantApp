@@ -16,6 +16,20 @@ export interface IDish {
   dishCategoryId: number;
 }
 
+export interface IOrderItem {
+  dishId: number;
+  quantity: number;
+  price: number;
+}
+
+export interface IOrder {
+  id: number;
+  userId: number;
+  total: number;
+  orderDate: string;
+  orderItems: IOrderItem[];
+}
+
 const adminAPI = axios.create({
   baseURL: '/api/admin',
   withCredentials: true,
@@ -68,6 +82,25 @@ export const addDish = async (newDish: any): Promise<IDish> => {
   const response = await adminAPI.post('/dishes', newDish);
   return response.data;
 };
+
+export const getOrders = async (): Promise<IOrder[]> => {
+  const response = await axios.get('/api/orders', { withCredentials: true });
+  return response.data;
+};
+
+export const deleteOrder = async (id: number): Promise<void> => {
+  await axios.delete(`/api/orders/${id}`, { withCredentials: true });
+};
+
+export const updateOrder = async (order: IOrder): Promise<void> => {
+  await axios.put(`/api/orders/${order.id}`, order, { withCredentials: true });
+};
+
+export const addOrder = async (newOrder: IOrder): Promise<IOrder> => {
+  const response = await axios.post('/api/orders', newOrder, { withCredentials: true });
+  return response.data;
+};
+
 
 export const changePassword = async (
   oldPassword: string,
