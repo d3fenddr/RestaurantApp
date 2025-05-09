@@ -95,12 +95,10 @@ namespace RestaurantAPI.Services.Implementations
                 user.Email = userDto.Email;
             if (!string.IsNullOrEmpty(userDto.Password))
                 user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
-            if (!string.IsNullOrEmpty(userDto.Role))
-                user.Role = userDto.Role;
 
+            // Роль не изменяется
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
-
             return true;
         }
 

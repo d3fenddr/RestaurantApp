@@ -8,13 +8,20 @@ import DishesList from './pages/DishesList';
 import DishPage from './pages/DishPage';
 import CartPage from './pages/CartPage';
 import { AuthProvider } from './context/AuthContext';
+import ResetPassword from './pages/ResetPassword';
+import VerifyEmail from './pages/VerifyEmail';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import Terms from './pages/Terms';
+import Home from './pages/Home';
 
 function App() {
   return (
     <AuthProvider>
       <Navbar />
       <Routes>
-        <Route path="/" element={<DishesList />} />
+        <Route path="/" element={<Home />} /> 
+        <Route path="/dishes" element={<DishesList />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
@@ -22,6 +29,11 @@ function App() {
         <Route path="/admin-user" element={<Profile />} />
         <Route path="/dish/:id" element={<DishPage />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/terms" element={<Terms />} />
       </Routes>
     </AuthProvider>
   );

@@ -6,6 +6,7 @@ interface User {
   fullName: string;
   email: string;
   role: string;
+  isEmailConfirmed: boolean;
 }
 
 interface AuthContextType {
@@ -24,7 +25,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
 
-  // Чтение user из localStorage
   useEffect(() => {
     const stored = localStorage.getItem('user');
     if (stored) {
@@ -32,12 +32,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const parsedUser = JSON.parse(stored);
         setUser(parsedUser);
       } catch {
-        logout(); // повреждённый user
+        logout();
       }
     }
   }, []);
 
-  // ⏰ Проверка на истечение токена (refreshTokenExpire)
   useEffect(() => {
     const expireTimeStr = getCookie('refreshTokenExpire');
     if (!expireTimeStr) return;

@@ -1,10 +1,17 @@
 .navbar {
   display: flex;
-  justify-content: flex-end;
-  gap: 1.5rem;
+  justify-content: space-between;
+  align-items: center;
   padding: 1rem 2rem;
   background: #fff;
   border-bottom: 1px solid #eee;
+}
+
+.navbar-left,
+.navbar-right {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
 }
 
 .navbar a {
@@ -18,15 +25,22 @@
 }
 
 .navbar button {
-  padding: 0.5rem 1rem;
   background-color: #b88b4a;
-  color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-weight: 600;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .navbar button:hover {
   background-color: #9f7234;
+}
+
+.logout-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using RestaurantAPI.Data;
 using RestaurantAPI.DTO;
 using RestaurantAPI.Models;
@@ -18,13 +17,15 @@ namespace RestaurantAPI.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _env;
+        private readonly IEmailService _emailService;
 
-        public AuthController(IAuthService authService, ApplicationDbContext context, IConfiguration configuration, IWebHostEnvironment env)
+        public AuthController(IAuthService authService, ApplicationDbContext context, IConfiguration configuration, IWebHostEnvironment env, IEmailService emailService)
         {
             _authService = authService;
             _context = context;
             _configuration = configuration;
             _env = env;
+            _emailService = emailService;
         }
 
         [HttpPost("register")]
@@ -33,12 +34,48 @@ namespace RestaurantAPI.Controllers
             try
             {
                 var result = await _authService.RegisterAsync(request);
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+                if (user == null) return BadRequest(new { message = "User creation failed." });
+
+                var token = Guid.NewGuid().ToString();
+                var expires = DateTime.UtcNow.AddHours(1);
+
+                _context.EmailVerificationTokens.Add(new EmailVerificationToken
+                {
+                    UserId = user.Id,
+                    Token = token,
+                    ExpiresAt = expires
+                });
+
+                await _context.SaveChangesAsync();
+
+                var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:5173";
+                var verifyLink = $"{frontendUrl}/verify-email?token={token}";
+                await _emailService.SendVerificationEmailAsync(user.Email, verifyLink);
+
                 return Ok(new { message = result });
             }
             catch (Exception ex)
             {
                 return BadRequest(new { error = ex.Message });
             }
+        }
+
+        [HttpGet("verify-email")]
+        public async Task<IActionResult> VerifyEmail([FromQuery] string token)
+        {
+            var entry = await _context.EmailVerificationTokens
+                .Include(e => e.User)
+                .FirstOrDefaultAsync(e => e.Token == token && e.ExpiresAt > DateTime.UtcNow);
+
+            if (entry == null)
+                return BadRequest(new { message = "Invalid or expired token." });
+
+            entry.User.IsEmailConfirmed = true;
+            _context.EmailVerificationTokens.Remove(entry);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Email confirmed successfully!" });
         }
 
         [HttpPost("login")]
@@ -49,9 +86,7 @@ namespace RestaurantAPI.Controllers
                 var authResponse = await _authService.LoginAsync(request);
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
                 if (user == null)
-                {
                     return Unauthorized("Invalid credentials.");
-                }
 
                 bool isDev = _env.IsDevelopment();
 
@@ -89,7 +124,8 @@ namespace RestaurantAPI.Controllers
                         id = user.Id,
                         fullName = user.FullName,
                         email = user.Email,
-                        role = user.Role
+                        role = user.Role,
+                        isEmailConfirmed = user.IsEmailConfirmed
                     }
                 });
             }
@@ -103,18 +139,14 @@ namespace RestaurantAPI.Controllers
         public async Task<IActionResult> Refresh()
         {
             if (!Request.Cookies.TryGetValue("refreshToken", out string refreshToken))
-            {
                 return Unauthorized("Refresh token not found.");
-            }
 
             var storedToken = await _context.RefreshTokens
                 .Include(rt => rt.User)
                 .FirstOrDefaultAsync(rt => rt.Token == refreshToken);
 
             if (storedToken == null || !storedToken.IsActive)
-            {
                 return Unauthorized("Invalid or expired refresh token.");
-            }
 
             var newAccessToken = _authService.RefreshAccessToken(storedToken.User);
             bool isDev = _env.IsDevelopment();
@@ -129,5 +161,89 @@ namespace RestaurantAPI.Controllers
 
             return Ok(new { accessToken = newAccessToken });
         }
+
+        [HttpPut("update-profile")]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto request)
+        {
+            var user = await _context.Users.FindAsync(request.Id);
+            if (user == null)
+                return NotFound();
+
+            user.FullName = request.FullName;
+            user.Role = request.Role;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Profile updated." });
+        }
+
+        [HttpPost("request-reset")]
+        public async Task<IActionResult> RequestPasswordReset([FromBody] string email)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null)
+                return NotFound(new { message = "No user with this email." });
+
+            var token = Guid.NewGuid().ToString();
+            var expires = DateTime.UtcNow.AddMinutes(30);
+
+            _context.PasswordResetTokens.Add(new PasswordResetToken
+            {
+                UserId = user.Id,
+                Token = token,
+                ExpiresAt = expires
+            });
+
+            await _context.SaveChangesAsync();
+
+            var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:5173";
+            var resetLink = $"{frontendUrl}/reset-password?token={token}";
+            await _emailService.SendResetPasswordEmailAsync(user.Email, resetLink);
+
+            return Ok(new { message = "Reset link sent to email." });
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            var tokenEntry = await _context.PasswordResetTokens
+                .Include(t => t.User)
+                .FirstOrDefaultAsync(t => t.Token == request.Token && t.ExpiresAt > DateTime.UtcNow);
+
+            if (tokenEntry == null)
+                return BadRequest(new { message = "Invalid or expired token." });
+
+            tokenEntry.User.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+            _context.PasswordResetTokens.Remove(tokenEntry);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Password has been reset." });
+        }
+
+        [HttpPost("resend-verification")]
+        public async Task<IActionResult> ResendVerification([FromBody] ResendVerificationRequest request)
+        {
+            Console.WriteLine("resend-verification for email: " + request.Email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+
+            if (user == null || user.IsEmailConfirmed)
+                return BadRequest(new { message = "Email already confirmed or not found." });
+
+            var token = Guid.NewGuid().ToString();
+            _context.EmailVerificationTokens.Add(new EmailVerificationToken
+            {
+                UserId = user.Id,
+                Token = token,
+                ExpiresAt = DateTime.UtcNow.AddHours(1)
+            });
+
+            await _context.SaveChangesAsync();
+
+            var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:5173";
+            var verifyLink = $"{frontendUrl}/verify-email?token={token}";
+            await _emailService.SendVerificationEmailAsync(user.Email, verifyLink);
+
+            return Ok(new { message = "Verification email sent." });
+        }
+
     }
 }
