@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { changePassword } from '../services/adminService';
 import './css/Profile.css';
+import Select from 'react-select';
 
 const Profile: React.FC = () => {
   const { user, setUser } = useAuth();
@@ -19,19 +20,28 @@ const Profile: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
 
   const [address, setAddress] = useState({
-    country: '',
-    city: '',
     street: '',
     postalCode: ''
   });
   const [addressMsg, setAddressMsg] = useState<string | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState<{ label: string; value: string } | null>(null);
+  const [selectedCity, setSelectedCity] = useState<{ label: string; value: string } | null>(null);
+  const [countries, setCountries] = useState<{ label: string; value: string }[]>([]);
+  const [cities, setCities] = useState<{ label: string; value: string }[]>([]);
 
   useEffect(() => {
     if (!user) return;
     const fetchAddress = async () => {
       try {
         const res = await axios.get(`/api/address/${user.id}`, { withCredentials: true });
-        if (res.data) setAddress(res.data);
+        if (res.data) {
+          setAddress({
+            street: res.data.street || '',
+            postalCode: res.data.postalCode || ''
+          });
+          setSelectedCountry({ label: res.data.country, value: res.data.country });
+          setSelectedCity({ label: res.data.city, value: res.data.city });
+        }
       } catch {
         console.log("No saved address");
       }
@@ -39,16 +49,50 @@ const Profile: React.FC = () => {
     fetchAddress();
   }, [user]);
 
+  useEffect(() => {
+    const fetchCountries = async () => {
+      const res = await axios.get('https://countriesnow.space/api/v0.1/countries');
+      const countryOptions = res.data.data.map((c: any) => ({
+        label: c.country,
+        value: c.country
+      }));
+      setCountries(countryOptions);
+    };
+    fetchCountries();
+  }, []);
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      if (!selectedCountry) return;
+      try {
+        const res = await axios.post('https://countriesnow.space/api/v0.1/countries/cities', {
+          country: selectedCountry.value
+        });
+        const cityOptions = res.data.data.map((c: string) => ({
+          label: c,
+          value: c
+        }));
+        setCities(cityOptions);
+      } catch {
+        setCities([]);
+      }
+    };
+    fetchCities();
+  }, [selectedCountry]);
+
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAddress({ ...address, [e.target.name]: e.target.value });
   };
 
   const saveAddress = async () => {
-    if (!user) return;
+    if (!user || !selectedCountry || !selectedCity) return;
     try {
       await axios.post('/api/address', {
-        ...address,
-        userId: user.id
+        userId: user.id,
+        country: selectedCountry.value,
+        city: selectedCity.value,
+        street: address.street,
+        postalCode: address.postalCode
       }, { withCredentials: true });
       setAddressMsg("Address saved successfully!");
     } catch {
@@ -154,20 +198,36 @@ const Profile: React.FC = () => {
       <div className="profile-info">
         <div className="form-group">
           <label>Country</label>
-          <input name="country" value={address.country} onChange={handleAddressChange} />
+          <Select
+            options={countries}
+            value={selectedCountry}
+            onChange={setSelectedCountry}
+            placeholder="Select country"
+            isClearable
+          />
         </div>
+
         <div className="form-group">
           <label>City</label>
-          <input name="city" value={address.city} onChange={handleAddressChange} />
+          <Select
+            options={cities}
+            value={selectedCity}
+            onChange={setSelectedCity}
+            placeholder="Select city"
+            isClearable
+          />
         </div>
+
         <div className="form-group">
           <label>Street</label>
           <input name="street" value={address.street} onChange={handleAddressChange} />
         </div>
+
         <div className="form-group">
           <label>Postal Code</label>
           <input name="postalCode" value={address.postalCode} onChange={handleAddressChange} />
         </div>
+
         <button onClick={saveAddress}>Save Address</button>
         {addressMsg && <p className="success">{addressMsg}</p>}
       </div>
