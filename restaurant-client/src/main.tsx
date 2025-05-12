@@ -8,6 +8,7 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { LoadScript } from '@react-google-maps/api';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
@@ -16,7 +17,9 @@ root.render(
     <BrowserRouter>
       <AuthProvider>
         <CartProvider>
+          <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
           <App />
+          </LoadScript>
         </CartProvider>
       </AuthProvider>
       <ToastContainer
