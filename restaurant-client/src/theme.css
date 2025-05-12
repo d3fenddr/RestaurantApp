@@ -1,0 +1,20 @@
+:root {
+  --color-bg: #FFF8F2;
+  --color-text: #3B1F0B;
+  --color-accent: #C1440E;
+  --color-accent-dark: #A83706;
+  --color-card-shadow: rgba(193, 68, 14, 0.15);
+  --color-border-light: #FFE1D3;
+  --color-toast-success: #E7522C;
+  --color-toast-error: #8C2F00;
+
+  --font-main: 'Segoe UI', sans-serif;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-main);
+  margin: 0;
+  padding: 0;
+}

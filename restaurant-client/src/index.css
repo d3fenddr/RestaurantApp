@@ -7,31 +7,28 @@
   padding: 0;
 }
 
-/* Переменные */
+/* Цветовые переменные */
 :root {
-  /* Цветовая схема – тёплая, премиальная */
-  --primary-bg: #f9f6f1;
-  --primary-text: #2e2e2e;
-  --accent-color: #b88b4a;
-  --accent-hover: #9f7234;
-  --card-bg: rgba(255, 255, 255, 0.15);
-  --border-color: #ddd5cc;
-  --error-color: #d9534f;
-  --success-color: #5cb85c;
+  --primary-bg: #fff5f0;
+  --primary-text: #3b1f0b;
+  --accent-color: #c1440e;
+  --accent-hover: #a83706;
+  --card-bg: rgba(255, 255, 255, 0.2);
+  --border-color: #e4cfc0;
+  --error-color: #b02a1a;
+  --success-color: #28a745;
 
-  /* Типографика */
   --font-family: 'Inter', sans-serif;
   --heading-font: 'Playfair Display', serif;
 
-  /* Отступы и размеры */
   --base-spacing: 1rem;
   --container-max-width: 1200px;
 }
 
-/* Базовые стили для html и body */
+/* Общие стили */
 html,
 body {
-  background: linear-gradient(to bottom right, #f9f6f1, #efe9e1);
+  background: linear-gradient(to bottom right, #fff5f0, #fce5d9);
   color: var(--primary-text);
   font-family: var(--font-family);
   font-size: 16px;
@@ -39,7 +36,7 @@ body {
   min-height: 100vh;
 }
 
-/* Глобальный контейнер */
+/* Контейнер */
 .container {
   max-width: var(--container-max-width);
   margin: 0 auto;
@@ -58,10 +55,10 @@ a:hover {
   color: var(--accent-hover);
 }
 
-/* Навигация */
+/* Navbar */
 nav {
-  background: #ffffffaa;
-  backdrop-filter: blur(8px);
+  background: #ffffffdd;
+  backdrop-filter: blur(10px);
   padding: var(--base-spacing);
   border-bottom: 1px solid var(--border-color);
   display: flex;
@@ -99,9 +96,9 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Карточки */
 .card {
-  background: rgba(255, 255, 255, 0.25);
+  background: var(--card-bg);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 12px;
   padding: 2rem;
   margin: 1rem auto;
@@ -127,7 +124,7 @@ h1, h2, h3, h4, h5, h6 {
   text-align: left;
 }
 
-/* Форма */
+/* Формы */
 .form-container {
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(12px);
@@ -215,11 +212,10 @@ button:hover:not(:disabled) {
   justify-content: center;
 }
 
-/* Карточка блюда */
+/* Блюдо */
 .dish-card {
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
   width: 300px;
   padding: 1.8rem;
   border-radius: 1rem;
@@ -254,7 +250,7 @@ button:hover:not(:disabled) {
   }
 }
 
-/* Адаптивность */
+/* Адаптив */
 @media (max-width: 768px) {
   nav {
     flex-direction: column;

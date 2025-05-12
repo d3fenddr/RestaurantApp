@@ -18,11 +18,10 @@ import Terms from './pages/Terms';
 import Home from './pages/Home';
 import ForgotPassword from './pages/ForgotPassword';
 
-import { AuthProvider, useAuth } from './context/AuthContext';
-import { CartProvider, useCart } from './context/CartContext';
-import 'react-toastify/dist/ReactToastify.css';
+import { useAuth } from './context/AuthContext';
+import { useCart } from './context/CartContext';
 
-function AppContent() {
+export default function App() {
   const { user } = useAuth();
   const { setCartCount } = useCart();
 
@@ -37,9 +36,8 @@ function AppContent() {
         console.error("Failed to load cart count", error);
       }
     };
-
     fetchCartCount();
-  }, [user]);
+  }, [user, setCartCount]);
 
   return (
     <>
@@ -47,16 +45,18 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/dishes" element={<DishesList />} />
+        <Route path="/dish/:id" element={<DishPage />} />
+        <Route path="/cart" element={<CartPage />} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin-user" element={<Profile />} />
-        <Route path="/dish/:id" element={<DishPage />} />
-        <Route path="/cart" element={<CartPage />} />
+
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
+
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/terms" element={<Terms />} />
@@ -64,15 +64,3 @@ function AppContent() {
     </>
   );
 }
-
-function App() {
-  return (
-    <AuthProvider>
-      <CartProvider>
-        <AppContent />
-      </CartProvider>
-    </AuthProvider>
-  );
-}
-
-export default App;

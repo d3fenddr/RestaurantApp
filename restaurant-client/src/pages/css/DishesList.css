@@ -1,77 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Cal+Sans:wght@300;700&display=swap');
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: var(--accent-color);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-family: 'Cal', sans-serif;
+  font-weight: 300; 
+}
+
+.navbar-left,
+.navbar-right {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.navbar a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.navbar a:hover {
+  color: #ffd3c2;
+}
+
+.navbar button {
+  background-color: var(--accent-color);
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.navbar button:hover {
+  background-color: var(--accent-hover);
+  transform: scale(1.05);
+}
+
+.logout-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+}
+
+.cart-link {
+  position: relative;
+  font-size: 20px;
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cart-link:hover {
+  color: #ffd3c2;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background-color: #e7522c;
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-weight: bold;
+  box-shadow: 0 0 0 2px var(--accent-color);
+}
+
+
 .page-title {
-    text-align: center;
-    margin-top: 40px;
-    font-size: 36px;
-    font-weight: bold;
-    color: #a6763d;
-    letter-spacing: 0.5px;
-  }
-  
-  .dish-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 28px;
-    padding: 32px 40px;
-    max-width: 1300px;
-    margin: 0 auto;
-  }
-  
-  .dish-card {
-    background-color: #fff;
-    border-radius: 20px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-    padding: 24px;
-    text-align: center;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-  }
-  
-  .dish-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-  }
-  
-  .dish-image {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-    border-radius: 12px;
-    margin-bottom: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  }
-  
-  .dish-card h2 {
-    font-size: 18px;
-    font-weight: 600;
-    color: #a6763d;
-    margin: 8px 0;
-  }
-  
-  .dish-card p {
-    font-size: 14px;
-    color: #555;
-    margin: 4px 0;
-  }
-  
-  .add-button {
-    margin-top: 16px;
-    padding: 10px 16px;
-    background-color: #b88942;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 14px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-  }
-  
-  .add-button:hover {
-    background-color: #a6763d;
-    transform: scale(1.03);
-  }
-  
+  text-align: center;
+  margin-top: 40px;
+  font-size: 36px;
+  font-weight: bold;
+  color: var(--accent-color);
+  letter-spacing: 0.5px;
+}
+
+.dish-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 28px;
+  padding: 32px 40px;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.dish-card {
+  background-color: #fff;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(193, 68, 14, 0.08); /* терракотовая тень */
+  padding: 24px;
+  text-align: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.dish-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 30px rgba(193, 68, 14, 0.12);
+}
+
+.dish-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.dish-card h2 {
+  font-size: 18px;
+  font-family: 'Cal Sans', sans-serif;
+  font-weight: 700;
+  color: var(--accent-color);
+  margin: 8px 0;
+}
+
+.dish-card p {
+  font-size: 14px;
+  color: #4b2b1b;
+  margin: 4px 0;
+}
+
+.add-button {
+  margin-top: 16px;
+  padding: 10px 16px;
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 3px 10px rgba(193, 68, 14, 0.1);
+}
+
+.add-button:hover {
+  background-color: var(--accent-hover);
+  transform: scale(1.03);
+}

@@ -1,34 +1,29 @@
-import React, { useCallback, useRef } from 'react';
-import { GoogleMap, Marker } from '@react-google-maps/api';
+import React from 'react';
+import { useJsApiLoader, GoogleMap, Marker } from '@react-google-maps/api';
 
-const containerStyle = {
-  width: '100%',
-  height: '400px',
-};
-
-const center = {
-  lat: 40.415002,
-  lng: 49.853308,
-};
+const center = { lat: 40.415002, lng: 49.853308 };
+const containerStyle = { width: '100%', height: '400px' };
 
 const RestaurantMap: React.FC = () => {
-  const mapRef = useRef<google.maps.Map | null>(null);
+  const { isLoaded, loadError } = useJsApiLoader({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY!,
+    libraries: ['places'],
+  });
 
-  const onLoad = useCallback((map: google.maps.Map) => {
-    mapRef.current = map;
-  }, []);
+  if (loadError) {
+    console.error('Ошибка Google Maps API:', loadError);
+    return <div style={{ color: 'red' }}>Error loading map</div>;
+  }
 
-  const onUnmount = useCallback(() => {
-    mapRef.current = null;
-  }, []);
+  if (!isLoaded) {
+    return <div>Loading map…</div>;
+  }
 
   return (
     <GoogleMap
       mapContainerStyle={containerStyle}
       center={center}
       zoom={15}
-      onLoad={onLoad}
-      onUnmount={onUnmount}
     >
       <Marker position={center} />
     </GoogleMap>
