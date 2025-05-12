@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import './css/Navbar.css';
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
+  const { cartCount } = useCart();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -25,7 +27,10 @@ const Navbar: React.FC = () => {
       </div>
 
       <div className="navbar-right">
-        <Link to="/cart">Cart</Link>
+        <Link to="/cart" className="cart-link">
+          🛒
+          {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+        </Link>
 
         {isAuthenticated ? (
           <>

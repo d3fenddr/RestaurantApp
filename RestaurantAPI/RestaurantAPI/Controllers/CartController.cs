@@ -17,7 +17,6 @@ namespace RestaurantAPI.Controllers
             _cartService = cartService;
         }
 
-        // GET: api/cart/{userId}
         [HttpGet("{userId}")]
         public async Task<ActionResult<IEnumerable<CartItemDto>>> GetCartItems(int userId)
         {
@@ -25,41 +24,37 @@ namespace RestaurantAPI.Controllers
             return Ok(items);
         }
 
-        // POST: api/cart
         [HttpPost]
-        public async Task<ActionResult<CartItemDto>> AddCartItem([FromBody] CartItemDto cartItemDto)
+        public async Task<ActionResult> AddCartItem([FromBody] CartItemDto cartItemDto)
         {
             var addedItem = await _cartService.AddCartItemAsync(cartItemDto);
-            return CreatedAtAction(nameof(GetCartItems), new { userId = addedItem.UserId }, addedItem);
+            var totalQuantity = await _cartService.GetTotalQuantityAsync(addedItem.UserId);
+
+            return Ok(new
+            {
+                item = addedItem,
+                totalQuantity
+            });
         }
 
-        // PUT: api/cart/{id}
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCartItem(int id, [FromBody] int quantity)
+        [HttpPut("update-quantity")]
+        public async Task<IActionResult> UpdateQuantity([FromBody] UpdateQuantityRequest request)
         {
-            var updated = await _cartService.UpdateCartItemAsync(id, quantity);
+            var updated = await _cartService.UpdateQuantityAsync(request.UserId, request.DishId, request.Delta);
             if (!updated)
                 return NotFound();
-            return NoContent();
+
+            var totalQuantity = await _cartService.GetTotalQuantityAsync(request.UserId);
+            return Ok(new { totalQuantity });
         }
 
-        // DELETE: api/cart/{id}
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> RemoveCartItem(int id)
-        {
-            var removed = await _cartService.RemoveCartItemAsync(id);
-            if (!removed)
-                return NotFound();
-            return NoContent();
-        }
-
-        // DELETE: api/cart/clear/{userId}
         [HttpDelete("clear/{userId}")]
         public async Task<IActionResult> ClearCart(int userId)
         {
-            var cleared = await _cartService.ClearCartAsync(userId);
-            if (!cleared)
+            var success = await _cartService.ClearCartAsync(userId);
+            if (!success)
                 return NotFound();
+
             return NoContent();
         }
     }

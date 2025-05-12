@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { changePassword } from '../services/adminService';
@@ -17,6 +17,44 @@ const Profile: React.FC = () => {
   const [passwordMsg, setPasswordMsg] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
+
+  const [address, setAddress] = useState({
+    country: '',
+    city: '',
+    street: '',
+    postalCode: ''
+  });
+  const [addressMsg, setAddressMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchAddress = async () => {
+      try {
+        const res = await axios.get(`/api/address/${user.id}`, { withCredentials: true });
+        if (res.data) setAddress(res.data);
+      } catch {
+        console.log("No saved address");
+      }
+    };
+    fetchAddress();
+  }, [user]);
+
+  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAddress({ ...address, [e.target.name]: e.target.value });
+  };
+
+  const saveAddress = async () => {
+    if (!user) return;
+    try {
+      await axios.post('/api/address', {
+        ...address,
+        userId: user.id
+      }, { withCredentials: true });
+      setAddressMsg("Address saved successfully!");
+    } catch {
+      setAddressMsg("Failed to save address.");
+    }
+  };
 
   if (!user) {
     return <div className="container">Please log in to view your profile.</div>;
@@ -110,6 +148,28 @@ const Profile: React.FC = () => {
 
         <button onClick={handleSaveChanges}>Save Changes</button>
         {saveMsg && <p className="success">{saveMsg}</p>}
+      </div>
+
+      <h2>Delivery Address</h2>
+      <div className="profile-info">
+        <div className="form-group">
+          <label>Country</label>
+          <input name="country" value={address.country} onChange={handleAddressChange} />
+        </div>
+        <div className="form-group">
+          <label>City</label>
+          <input name="city" value={address.city} onChange={handleAddressChange} />
+        </div>
+        <div className="form-group">
+          <label>Street</label>
+          <input name="street" value={address.street} onChange={handleAddressChange} />
+        </div>
+        <div className="form-group">
+          <label>Postal Code</label>
+          <input name="postalCode" value={address.postalCode} onChange={handleAddressChange} />
+        </div>
+        <button onClick={saveAddress}>Save Address</button>
+        {addressMsg && <p className="success">{addressMsg}</p>}
       </div>
 
       <h2>Password</h2>

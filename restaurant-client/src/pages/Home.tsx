@@ -22,7 +22,7 @@ const Home: React.FC = () => {
 
         <div style={{ margin: '2rem 0' }}>
           <img
-            src="/food-restaurant-icon.svg"
+            src="/schnellherd.png"
             alt="Restaurant Logo"
             style={{ maxWidth: '180px' }}
           />

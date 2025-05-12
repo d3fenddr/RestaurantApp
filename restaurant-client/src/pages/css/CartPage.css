@@ -1,29 +1,79 @@
-/* CartPage.css */
-.cart-page {
-    max-width: 900px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  }
-  
-  .cart-page h2 {
-    margin-top: 2rem;
-    color: var(--accent-color);
-  }
-  
-  .cart-page .dish-card {
-    text-align: left;
-    padding: 1rem;
-    border-radius: 10px;
-    background: #fff;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  }
-  
-  .cart-page button {
-    margin-top: 1rem;
-  }
-  
+.cart-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.cart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.cart-item {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.quantity-controls button {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #b88942;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: background-color 0.2s ease;
+}
+
+.quantity-controls span {
+  font-size: 16px;
+  font-weight: bold;
+  min-width: 24px;
+  text-align: center;
+  display: inline-block;
+}
+
+.order-button {
+  padding: 12px 20px;
+  background-color: #b88942;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.order-button:hover {
+  background-color: #a6763d;
+}
+
+.success-message {
+  color: green;
+  margin-bottom: 20px;
+  font-weight: bold;
+}

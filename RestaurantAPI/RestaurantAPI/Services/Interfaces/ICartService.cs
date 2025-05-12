@@ -8,8 +8,11 @@ namespace RestaurantAPI.Services.Interfaces
     {
         Task<IEnumerable<CartItemDto>> GetCartItemsByUserIdAsync(int userId);
         Task<CartItemDto> AddCartItemAsync(CartItemDto cartItemDto);
-        Task<bool> UpdateCartItemAsync(int id, int quantity);
-        Task<bool> RemoveCartItemAsync(int id);
+        Task<bool> UpdateCartItemAsync(int cartItemId, int quantity);
+        Task<bool> RemoveCartItemAsync(int cartItemId);
         Task<bool> ClearCartAsync(int userId);
+
+        Task<int> GetTotalQuantityAsync(int userId);
+        Task<bool> UpdateQuantityAsync(int userId, int dishId, int delta);
     }
 }

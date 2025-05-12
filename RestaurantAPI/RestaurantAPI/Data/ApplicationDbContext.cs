@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RestaurantAPI.Models;
 using System.ComponentModel.DataAnnotations.Schema;
+using RestaurantAPI.Models;
+
 namespace RestaurantAPI.Data;
 
 public class ApplicationDbContext : DbContext
@@ -16,6 +18,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
     public DbSet<EmailVerificationToken> EmailVerificationTokens { get; set; }
+    public DbSet<DeliveryAddress> DeliveryAddresses { get; set; }  
+
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

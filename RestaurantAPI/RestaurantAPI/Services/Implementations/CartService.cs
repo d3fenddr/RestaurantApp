@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RestaurantAPI.Data;
+using RestaurantAPI.Data; 
 using RestaurantAPI.DTO;
 using RestaurantAPI.Models;
 using RestaurantAPI.Services.Interfaces;
@@ -21,13 +21,13 @@ namespace RestaurantAPI.Services.Implementations
         public async Task<IEnumerable<CartItemDto>> GetCartItemsByUserIdAsync(int userId)
         {
             return await _context.CartItems
-                .Where(ci => ci.UserId == userId)
-                .Select(ci => new CartItemDto
+                .Where(c => c.UserId == userId)
+                .Select(c => new CartItemDto
                 {
-                    Id = ci.Id,
-                    UserId = ci.UserId,
-                    DishId = ci.DishId,
-                    Quantity = ci.Quantity
+                    Id = c.Id,
+                    UserId = c.UserId,
+                    DishId = c.DishId,
+                    Quantity = c.Quantity
                 })
                 .ToListAsync();
         }
@@ -35,36 +35,32 @@ namespace RestaurantAPI.Services.Implementations
         public async Task<CartItemDto> AddCartItemAsync(CartItemDto cartItemDto)
         {
             var existingItem = await _context.CartItems
-                .FirstOrDefaultAsync(ci => ci.UserId == cartItemDto.UserId && ci.DishId == cartItemDto.DishId);
+                .FirstOrDefaultAsync(c => c.UserId == cartItemDto.UserId && c.DishId == cartItemDto.DishId);
 
             if (existingItem != null)
             {
                 existingItem.Quantity += cartItemDto.Quantity;
                 _context.CartItems.Update(existingItem);
-                await _context.SaveChangesAsync();
-                cartItemDto.Id = existingItem.Id;
-                cartItemDto.Quantity = existingItem.Quantity;
-                return cartItemDto;
             }
             else
             {
-                var cartItem = new CartItem
+                var newItem = new CartItem
                 {
                     UserId = cartItemDto.UserId,
                     DishId = cartItemDto.DishId,
                     Quantity = cartItemDto.Quantity
                 };
-
-                _context.CartItems.Add(cartItem);
-                await _context.SaveChangesAsync();
-                cartItemDto.Id = cartItem.Id;
-                return cartItemDto;
+                await _context.CartItems.AddAsync(newItem);
             }
+
+            await _context.SaveChangesAsync();
+
+            return cartItemDto;
         }
 
-        public async Task<bool> UpdateCartItemAsync(int id, int quantity)
+        public async Task<bool> UpdateCartItemAsync(int cartItemId, int quantity)
         {
-            var cartItem = await _context.CartItems.FindAsync(id);
+            var cartItem = await _context.CartItems.FindAsync(cartItemId);
             if (cartItem == null)
                 return false;
 
@@ -74,9 +70,9 @@ namespace RestaurantAPI.Services.Implementations
             return true;
         }
 
-        public async Task<bool> RemoveCartItemAsync(int id)
+        public async Task<bool> RemoveCartItemAsync(int cartItemId)
         {
-            var cartItem = await _context.CartItems.FindAsync(id);
+            var cartItem = await _context.CartItems.FindAsync(cartItemId);
             if (cartItem == null)
                 return false;
 
@@ -87,11 +83,40 @@ namespace RestaurantAPI.Services.Implementations
 
         public async Task<bool> ClearCartAsync(int userId)
         {
-            var cartItems = await _context.CartItems.Where(ci => ci.UserId == userId).ToListAsync();
-            if (cartItems == null || !cartItems.Any())
+            var items = await _context.CartItems
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
+
+            if (!items.Any())
                 return false;
 
-            _context.CartItems.RemoveRange(cartItems);
+            _context.CartItems.RemoveRange(items);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<int> GetTotalQuantityAsync(int userId)
+        {
+            return await _context.CartItems
+                .Where(c => c.UserId == userId)
+                .SumAsync(c => c.Quantity);
+        }
+
+        public async Task<bool> UpdateQuantityAsync(int userId, int dishId, int delta)
+        {
+            var cartItem = await _context.CartItems
+                .FirstOrDefaultAsync(c => c.UserId == userId && c.DishId == dishId);
+
+            if (cartItem == null)
+                return false;
+
+            cartItem.Quantity += delta;
+
+            if (cartItem.Quantity <= 0)
+                _context.CartItems.Remove(cartItem);
+            else
+                _context.CartItems.Update(cartItem);
+
             await _context.SaveChangesAsync();
             return true;
         }
