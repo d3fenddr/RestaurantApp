@@ -1,9 +1,10 @@
+// src/pages/Profile.tsx
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { changePassword } from '../services/adminService';
 import './css/Profile.css';
-import Select from 'react-select';
+import AddressPicker from '../components/AddressPicker';
 
 const Profile: React.FC = () => {
   const { user, setUser } = useAuth();
@@ -19,107 +20,33 @@ const Profile: React.FC = () => {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
 
-  const [address, setAddress] = useState({
-    street: '',
-    postalCode: ''
-  });
+  const [address, setAddress] = useState<string>('');
+  const [location, setLocation] = useState<google.maps.LatLngLiteral>({ lat: 40.415002, lng: 49.853308 });
   const [addressMsg, setAddressMsg] = useState<string | null>(null);
-  const [selectedCountry, setSelectedCountry] = useState<{ label: string; value: string } | null>(null);
-  const [selectedCity, setSelectedCity] = useState<{ label: string; value: string } | null>(null);
-  const [countries, setCountries] = useState<{ label: string; value: string }[]>([]);
-  const [cities, setCities] = useState<{ label: string; value: string }[]>([]);
+  const [addressLoading, setAddressLoading] = useState(false);
 
   useEffect(() => {
     if (!user) return;
-    const fetchAddress = async () => {
+    (async () => {
       try {
         const res = await axios.get(`/api/address/${user.id}`, { withCredentials: true });
         if (res.data) {
-          setAddress({
-            street: res.data.street || '',
-            postalCode: res.data.postalCode || ''
+          setAddress(res.data.street || '');
+          setLocation({
+            lat: res.data.latitude || 40.415002,
+            lng: res.data.longitude || 49.853308,
           });
-          setSelectedCountry({ label: res.data.country, value: res.data.country });
-          setSelectedCity({ label: res.data.city, value: res.data.city });
         }
       } catch {
-        console.log("No saved address");
+        console.log('No saved address');
       }
-    };
-    fetchAddress();
+    })();
   }, [user]);
 
-  useEffect(() => {
-    const fetchCountries = async () => {
-      const res = await axios.get('https://countriesnow.space/api/v0.1/countries');
-      const countryOptions = res.data.data.map((c: any) => ({
-        label: c.country,
-        value: c.country
-      }));
-      setCountries(countryOptions);
-    };
-    fetchCountries();
-  }, []);
-
-  useEffect(() => {
-    const fetchCities = async () => {
-      if (!selectedCountry) return;
-      try {
-        const res = await axios.post('https://countriesnow.space/api/v0.1/countries/cities', {
-          country: selectedCountry.value
-        });
-        const cityOptions = res.data.data.map((c: string) => ({
-          label: c,
-          value: c
-        }));
-        setCities(cityOptions);
-      } catch {
-        setCities([]);
-      }
-    };
-    fetchCities();
-  }, [selectedCountry]);
-
-  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAddress({ ...address, [e.target.name]: e.target.value });
-  };
-
-  const saveAddress = async () => {
-    if (!user || !selectedCountry || !selectedCity) return;
-    try {
-      await axios.post('/api/address', {
-        userId: user.id,
-        country: selectedCountry.value,
-        city: selectedCity.value,
-        street: address.street,
-        postalCode: address.postalCode
-      }, { withCredentials: true });
-      setAddressMsg("Address saved successfully!");
-    } catch {
-      setAddressMsg("Failed to save address.");
-    }
-  };
-
-  if (!user) {
-    return <div className="container">Please log in to view your profile.</div>;
-  }
-
-  const handleResendVerification = async () => {
-    try {
-      await axios.post('/api/auth/resend-verification', { email: user.email });
-      setEmailStatusMsg('Verification email sent!');
-    } catch {
-      setEmailStatusMsg('Failed to send verification email.');
-    }
-  };
-
   const handleSaveChanges = async () => {
+    if (!user) return;
     try {
-      await axios.put('/api/auth/update-profile', {
-        id: user.id,
-        fullName
-      });
-
+      await axios.put('/api/auth/update-profile', { id: user.id, fullName });
       const updatedUser = { ...user, fullName };
       localStorage.setItem('user', JSON.stringify(updatedUser));
       setUser(updatedUser);
@@ -129,15 +56,53 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleResendVerification = async () => {
+    if (!user) return;
+    try {
+      await axios.post('/api/auth/resend-verification', { email: user.email });
+      setEmailStatusMsg('Verification email sent!');
+    } catch {
+      setEmailStatusMsg('Failed to send verification email.');
+    }
+  };
+
+  const handleSelectAddress = (addr: string, loc: google.maps.LatLngLiteral) => {
+    setAddress(addr);
+    setLocation(loc);
+  };
+
+  const handleSaveAddress = async () => {
+    if (!user) return;
+    setAddressLoading(true);
+    try {
+      await axios.post(
+        '/api/address',
+        {
+          userId: user.id,
+          country: 'Azerbaijan',
+          city: 'Baku',
+          street: address,
+          postalCode: '',
+          latitude: location.lat,
+          longitude: location.lng,
+        },
+        { withCredentials: true }
+      );
+      setAddressMsg('Address saved successfully!');
+    } catch {
+      setAddressMsg('Failed to save address.');
+    } finally {
+      setAddressLoading(false);
+    }
+  };
+
   const handleChangePassword = async () => {
     setPasswordError(null);
     setPasswordMsg(null);
-
     if (newPassword !== confirmPassword) {
       setPasswordError('New passwords do not match.');
       return;
     }
-
     try {
       await changePassword(oldPassword, newPassword);
       setPasswordMsg('Password successfully changed.');
@@ -150,8 +115,12 @@ const Profile: React.FC = () => {
     }
   };
 
+  if (!user) {
+    return <div className="container">Please log in to view your profile.</div>;
+  }
+
   return (
-    <div className="container">
+    <div className="container" style={{ padding: '2rem' }}>
       <h1>Your Profile</h1>
 
       <div className="profile-info">
@@ -165,75 +134,52 @@ const Profile: React.FC = () => {
           <input value={user.email} disabled />
         </div>
 
-        {user.role === 'Admin' && (
-          <div className="form-group">
-            <label>Role</label>
-            <input value="Admin" disabled />
-          </div>
-        )}
-
         {user.isEmailConfirmed ? (
           <p className="profile-email-status">
-            <strong>Email Status:</strong>{' '}
-            <span className="confirmed">Confirmed ✅</span>
+            <strong>Email Status:</strong> <span className="confirmed">Confirmed ✅</span>
           </p>
         ) : (
           <>
             <p className="profile-email-status">
-              <strong>Email Status:</strong>{' '}
-              <span className="not-confirmed">Not confirmed ❌</span>
+              <strong>Email Status:</strong> <span className="not-confirmed">Not confirmed ❌</span>
             </p>
-            <button onClick={handleResendVerification} className="profile-btn">
-              Send Email Verification
+            <button className="profile-btn" onClick={handleResendVerification}>
+              Send Verification Email
             </button>
             {emailStatusMsg && <p>{emailStatusMsg}</p>}
           </>
         )}
 
-        <button onClick={handleSaveChanges}>Save Changes</button>
+        <button className="profile-btn" onClick={handleSaveChanges}>Save Changes</button>
         {saveMsg && <p className="success">{saveMsg}</p>}
       </div>
 
       <h2>Delivery Address</h2>
       <div className="profile-info">
-        <div className="form-group">
-          <label>Country</label>
-          <Select
-            options={countries}
-            value={selectedCountry}
-            onChange={setSelectedCountry}
-            placeholder="Select country"
-            isClearable
-          />
-        </div>
-
-        <div className="form-group">
-          <label>City</label>
-          <Select
-            options={cities}
-            value={selectedCity}
-            onChange={setSelectedCity}
-            placeholder="Select city"
-            isClearable
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Street</label>
-          <input name="street" value={address.street} onChange={handleAddressChange} />
-        </div>
-
-        <div className="form-group">
-          <label>Postal Code</label>
-          <input name="postalCode" value={address.postalCode} onChange={handleAddressChange} />
-        </div>
-
-        <button onClick={saveAddress}>Save Address</button>
+        <AddressPicker
+          initialAddress={address}
+          initialLocation={location}
+          onSelect={handleSelectAddress}
+        />
+        {address && (
+          <p>
+            <strong>Selected Address:</strong> {address}
+          </p>
+        )}
+        <button
+          className="profile-btn"
+          onClick={handleSaveAddress}
+          disabled={addressLoading}
+        >
+          {addressLoading ? 'Saving…' : 'Save Address'}
+        </button>
         {addressMsg && <p className="success">{addressMsg}</p>}
       </div>
 
       <h2>Password</h2>
-      <button onClick={() => setShowModal(true)}>Change Password</button>
+      <button className="profile-btn" onClick={() => setShowModal(true)}>
+        Change Password
+      </button>
 
       {showModal && (
         <div className="modal-overlay">
@@ -243,36 +189,21 @@ const Profile: React.FC = () => {
 
             <div className="form-group">
               <label>Old Password</label>
-              <input
-                type="password"
-                value={oldPassword}
-                onChange={e => setOldPassword(e.target.value)}
-                placeholder="Enter current password"
-              />
+              <input type="password" value={oldPassword} onChange={e => setOldPassword(e.target.value)} />
             </div>
 
             <div className="form-group">
               <label>New Password</label>
-              <input
-                type="password"
-                value={newPassword}
-                onChange={e => setNewPassword(e.target.value)}
-                placeholder="Enter new password"
-              />
+              <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
             </div>
 
             <div className="form-group">
               <label>Confirm New Password</label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={e => setConfirmPassword(e.target.value)}
-                placeholder="Repeat new password"
-              />
+              <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
             </div>
 
             <div className="modal-buttons">
-              <button onClick={handleChangePassword}>Save</button>
+              <button className="profile-btn" onClick={handleChangePassword}>Save</button>
               <button onClick={() => setShowModal(false)}>Cancel</button>
             </div>
           </div>

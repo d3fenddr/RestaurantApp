@@ -26,7 +26,6 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        // Database connection
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
 
