@@ -1,10 +1,9 @@
-// src/pages/Profile.tsx
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
-import { changePassword } from '../services/adminService';
 import './css/Profile.css';
 import AddressPicker from '../components/AddressPicker';
+import ChangePasswordModal from '../components/ChangePasswordModal';
 
 const Profile: React.FC = () => {
   const { user, setUser } = useAuth();
@@ -12,12 +11,6 @@ const Profile: React.FC = () => {
   const [fullName, setFullName] = useState(user?.fullName || '');
   const [emailStatusMsg, setEmailStatusMsg] = useState<string | null>(null);
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
-
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordMsg, setPasswordMsg] = useState<string | null>(null);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
 
   const [address, setAddress] = useState<string>('');
@@ -96,25 +89,6 @@ const Profile: React.FC = () => {
     }
   };
 
-  const handleChangePassword = async () => {
-    setPasswordError(null);
-    setPasswordMsg(null);
-    if (newPassword !== confirmPassword) {
-      setPasswordError('New passwords do not match.');
-      return;
-    }
-    try {
-      await changePassword(oldPassword, newPassword);
-      setPasswordMsg('Password successfully changed.');
-      setOldPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-      setShowModal(false);
-    } catch (err: any) {
-      setPasswordError(err.response?.data?.message || 'Error changing password.');
-    }
-  };
-
   if (!user) {
     return <div className="container">Please log in to view your profile.</div>;
   }
@@ -130,7 +104,7 @@ const Profile: React.FC = () => {
         </div>
 
         <div className="form-group">
-          <label>Email (not editable)</label>
+          <label>Email</label>
           <input value={user.email} disabled />
         </div>
 
@@ -154,13 +128,23 @@ const Profile: React.FC = () => {
         {saveMsg && <p className="success">{saveMsg}</p>}
       </div>
 
+      <h2>Password</h2>
+      <div className="profile-info">
+        <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <input type="password" value="********" disabled style={{ flex: 1 }} />
+          <button className="profile-btn" onClick={() => setShowModal(true)}>Change Password</button>
+        </div>
+      </div>
+
       <h2>Delivery Address</h2>
       <div className="profile-info">
-        <AddressPicker
-          initialAddress={address}
-          initialLocation={location}
-          onSelect={handleSelectAddress}
-        />
+        <div className="address-picker-wrapper">
+          <AddressPicker
+            initialAddress={address}
+            initialLocation={location}
+            onSelect={handleSelectAddress}
+          />
+        </div>
         {address && (
           <p>
             <strong>Selected Address:</strong> {address}
@@ -176,39 +160,7 @@ const Profile: React.FC = () => {
         {addressMsg && <p className="success">{addressMsg}</p>}
       </div>
 
-      <h2>Password</h2>
-      <button className="profile-btn" onClick={() => setShowModal(true)}>
-        Change Password
-      </button>
-
-      {showModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            {passwordMsg && <p className="success">{passwordMsg}</p>}
-            {passwordError && <p className="error">{passwordError}</p>}
-
-            <div className="form-group">
-              <label>Old Password</label>
-              <input type="password" value={oldPassword} onChange={e => setOldPassword(e.target.value)} />
-            </div>
-
-            <div className="form-group">
-              <label>New Password</label>
-              <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
-            </div>
-
-            <div className="form-group">
-              <label>Confirm New Password</label>
-              <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
-            </div>
-
-            <div className="modal-buttons">
-              <button className="profile-btn" onClick={handleChangePassword}>Save</button>
-              <button onClick={() => setShowModal(false)}>Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ChangePasswordModal isOpen={showModal} onClose={() => setShowModal(false)} />
     </div>
   );
 };

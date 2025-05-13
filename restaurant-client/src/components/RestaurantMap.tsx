@@ -11,7 +11,7 @@ const RestaurantMap: React.FC = () => {
   });
 
   if (loadError) {
-    console.error('Ошибка Google Maps API:', loadError);
+    console.error('Google Maps API error:', loadError);
     return <div style={{ color: 'red' }}>Error loading map</div>;
   }
 

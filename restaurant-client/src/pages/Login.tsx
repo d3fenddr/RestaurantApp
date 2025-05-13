@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './css/Login.css';
+import PasswordField from '../components/PasswordField';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -31,7 +32,6 @@ const Login: React.FC = () => {
         navigate('/profile');
       }
     } catch (err: any) {
-      console.error('Login error:', err);
       setError(err.response?.data?.error || 'Login failed');
     } finally {
       setLoading(false);
@@ -52,15 +52,12 @@ const Login: React.FC = () => {
             required
           />
         </div>
-        <div className="form-group">
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-          />
-        </div>
+        <PasswordField
+          label="Password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          required
+        />
         <button type="submit" disabled={loading}>
           {loading ? 'Logging in...' : 'Login'}
         </button>

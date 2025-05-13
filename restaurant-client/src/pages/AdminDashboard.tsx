@@ -75,38 +75,41 @@ const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="admin-dashboard">
-      <h1>Admin Dashboard</h1>
-      {error && <p className="error">{error}</p>}
+    <>
+      <div className="admin-dashboard">
+        <h1>Admin Dashboard</h1>
+        {error && <p className="error">{error}</p>}
 
-      <div className="tab-buttons">
-        <button onClick={() => setView('users')}>Users</button>
-        <button onClick={() => setView('dishes')}>Dishes</button>
-        <button onClick={() => setView('orders')}>Orders</button>
+        <div className="tab-buttons">
+          <button onClick={() => setView('users')}>Users</button>
+          <button onClick={() => setView('dishes')}>Dishes</button>
+          <button onClick={() => setView('orders')}>Orders</button>
+        </div>
+
+        <ul>
+          {currentItems.map(item => (
+            <li key={item.id}>
+              <div className="item-info">
+                {view === 'users' && `${(item as IUser).fullName} - ${(item as IUser).email} - ${(item as IUser).role}`}
+                {view === 'dishes' && `${(item as IDish).name} - $${(item as IDish).price}`}
+                {view === 'orders' && `Order #${(item as IOrder).id} - User: ${(item as IOrder).userId} - $${(item as IOrder).total}`}
+              </div>
+              <div className="item-actions">
+                <button onClick={() => setEditItem(item)}>Edit</button>
+                <button onClick={() => setConfirmDelete({ id: item.id, type: view })}>Delete</button>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </div>
 
-      <ul>
-      {currentItems.map(item => (
-        <li key={item.id}>
-          <div className="item-info">
-            {view === 'users' && `${(item as IUser).fullName} - ${(item as IUser).email} - ${(item as IUser).role}`}
-            {view === 'dishes' && `${(item as IDish).name} - $${(item as IDish).price}`}
-            {view === 'orders' && `Order #${(item as IOrder).id} - User: ${(item as IOrder).userId} - $${(item as IOrder).total}`}
-          </div>
-          <div className="item-actions">
-            <button onClick={() => setEditItem(item)}>Edit</button>
-            <button onClick={() => setConfirmDelete({ id: item.id, type: view })}>Delete</button>
-          </div>
-        </li>
-      ))}
-    </ul>
-
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
-
+      {/* ВНЕ div.admin-dashboard */}
       <AdminModal
         title={`Edit ${view.slice(0, 1).toUpperCase() + view.slice(1).slice(0, -1)}`}
         isOpen={!!editItem}
@@ -149,7 +152,7 @@ const AdminDashboard: React.FC = () => {
         onConfirm={handleDelete}
         onCancel={() => setConfirmDelete(null)}
       />
-    </div>
+    </>
   );
 };
 
