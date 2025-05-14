@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import { useRef, useState, useCallback, useEffect } from 'react';
 import {
   useJsApiLoader,
@@ -71,7 +72,7 @@ export default function AddressPicker({
 
     const bounds = new google.maps.LatLngBounds(BAKU_BOUNDS);
     if (!bounds.contains(new google.maps.LatLng(loc))) {
-      alert('Пожалуйста, выберите адрес внутри Баку');
+      toast.error('Please select an address within Baku');
       return;
     }
 
