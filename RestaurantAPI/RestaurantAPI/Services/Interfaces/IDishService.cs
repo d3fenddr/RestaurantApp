@@ -10,6 +10,8 @@ namespace RestaurantAPI.Services.Interfaces
         Task<DishDto?> GetDishByIdAsync(int id);
         Task<DishDto> CreateDishAsync(DishDto dishDto);
         Task<bool> UpdateDishAsync(int id, DishDto dishDto);
+        Task<bool> UpdateImageUrlAsync(int dishId, string imageUrl);
         Task<bool> DeleteDishAsync(int id);
+
     }
 }

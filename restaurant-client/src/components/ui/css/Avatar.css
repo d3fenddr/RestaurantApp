@@ -1,0 +1,17 @@
+.avatar-image {
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+}
+
+.avatar-placeholder {
+  border-radius: 50%;
+  background-color: #eee;
+  color: #555;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ccc;
+  user-select: none;
+}

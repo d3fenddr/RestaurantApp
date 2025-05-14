@@ -4,7 +4,7 @@ import {
   useJsApiLoader,
   GoogleMap,
   MarkerF as Marker,
-  StandaloneSearchBox
+  Autocomplete
 } from '@react-google-maps/api';
 
 const BAKU_BOUNDS: google.maps.LatLngBoundsLiteral = {
@@ -27,15 +27,15 @@ export default function AddressPicker({
   initialLocation,
   onSelect,
 }: AddressPickerProps) {
-  const libraries = ['places'] as const;
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY!,
-    libraries: libraries as any,
+    libraries: ['places'],
   });
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const searchBoxRef = useRef<google.maps.places.SearchBox | null>(null);
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
+  const geocoderRef = useRef<google.maps.Geocoder | null>(null);
 
   const [markerPos, setMarkerPos] = useState<google.maps.LatLngLiteral>(
     initialLocation || { lat: 40.415002, lng: 49.853308 }
@@ -53,15 +53,14 @@ export default function AddressPicker({
   const onMapLoad = useCallback((map: google.maps.Map) => {
     mapRef.current = map;
     map.fitBounds(BAKU_BOUNDS);
+    geocoderRef.current = new google.maps.Geocoder();
   }, []);
 
-  const onPlacesChanged = () => {
-    const box = searchBoxRef.current;
-    if (!box) return;
-    const places = box.getPlaces();
-    if (!places || !places.length) return;
+  const onPlaceChanged = () => {
+    const auto = autocompleteRef.current;
+    if (!auto) return;
 
-    const place = places[0];
+    const place = auto.getPlace();
     if (!place.geometry || !place.geometry.location) return;
 
     const location = place.geometry.location;
@@ -71,8 +70,8 @@ export default function AddressPicker({
     };
 
     const bounds = new google.maps.LatLngBounds(BAKU_BOUNDS);
-    if (!bounds.contains(new google.maps.LatLng(loc))) {
-      toast.error('Please select an address within Baku');
+    if (!bounds.contains(location)) {
+      toast.error('We are not currently supporting this area');
       return;
     }
 
@@ -81,28 +80,62 @@ export default function AddressPicker({
     onSelect(place.formatted_address?.trim() || '', loc);
   };
 
+  const onMapClick = (e: google.maps.MapMouseEvent) => {
+    if (!e.latLng || !geocoderRef.current) return;
+
+    const latLng = e.latLng;
+    const loc = { lat: latLng.lat(), lng: latLng.lng() };
+
+    const bounds = new google.maps.LatLngBounds(BAKU_BOUNDS);
+    if (!bounds.contains(latLng)) {
+      toast.error('Please click inside Baku');
+      return;
+    }
+
+    geocoderRef.current.geocode({ location: loc }, (results, status) => {
+      if (status === 'OK' && results && results[0]) {
+        const formatted = results[0].formatted_address;
+        setMarkerPos(loc);
+        mapRef.current?.panTo(loc);
+        if (inputRef.current) inputRef.current.value = formatted;
+        onSelect(formatted.trim(), loc);
+      } else {
+        toast.error('Could not retrieve address');
+      }
+    });
+  };
+
   if (loadError) return <div style={{ color: 'red' }}>Ошибка загрузки карт</div>;
   if (!isLoaded) return <div>Загрузка карт…</div>;
 
   return (
     <>
-      <StandaloneSearchBox
-        onLoad={(ref) => (searchBoxRef.current = ref)}
-        onPlacesChanged={onPlacesChanged}
+      <Autocomplete
+        onLoad={(ref) => {
+          autocompleteRef.current = ref;
+        }}
+        onPlaceChanged={onPlaceChanged}
+        options={{
+          bounds: new google.maps.LatLngBounds(BAKU_BOUNDS),
+          strictBounds: true,
+          componentRestrictions: { country: 'az' },
+          types: ['geocode'],
+        }}
       >
         <input
           ref={inputRef}
           type="text"
-          placeholder="Введите адрес в Баку"
+          placeholder="Enter address or choose on map"
           style={{ width: '100%', padding: '.5rem', fontSize: '1rem', marginBottom: '.5rem' }}
         />
-      </StandaloneSearchBox>
+      </Autocomplete>
 
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={markerPos}
         zoom={13}
         onLoad={onMapLoad}
+        onClick={onMapClick}
         options={{
           restriction: {
             latLngBounds: BAKU_BOUNDS,

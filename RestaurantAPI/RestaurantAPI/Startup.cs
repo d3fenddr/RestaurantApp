@@ -47,6 +47,7 @@ public class Startup
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IBlobStorageService, BlobStorageService>();
 
         // Configure JWT authentication: read token from cookie "accessToken".
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -110,7 +111,7 @@ public class Startup
         using (var serviceScope = app.ApplicationServices.CreateScope())
         {
             var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            DbInitializer.Initialize(context);
+            DbInitializer.InitializeAsync(context, serviceScope.ServiceProvider).GetAwaiter().GetResult();
         }
 
         app.UseSwagger();

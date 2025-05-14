@@ -96,11 +96,22 @@ namespace RestaurantAPI.Services.Implementations
             if (!string.IsNullOrEmpty(userDto.Password))
                 user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
 
-            // Роль не изменяется
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> UpdateAvatarUrlAsync(int userId, string imageUrl)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return false;
+
+            user.AvatarUrl = imageUrl;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
 
         public async Task<bool> DeleteUserAsync(int id)
         {

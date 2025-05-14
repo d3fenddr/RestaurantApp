@@ -45,6 +45,8 @@ const CartPage: React.FC = () => {
 
   const updateQuantity = async (dishId: number, delta: number) => {
     if (!user) return;
+    
+    if (!items.some(i => i.dishId === dishId)) return;
 
     try {
       const response = await axios.put('/api/cart/update-quantity', {
@@ -54,10 +56,13 @@ const CartPage: React.FC = () => {
       }, { withCredentials: true });
 
       setCartCount(response.data.totalQuantity);
+
       const updatedItems = await axios.get(`/api/cart/${user.id}`, { withCredentials: true });
       setItems(updatedItems.data);
-    } catch (err) {
-      toast.error("Failed to update quantity");
+    } catch (err: any) {
+      if (err.response?.status !== 404) {
+        toast.error("Failed to update quantity");
+      }
     }
   };
 

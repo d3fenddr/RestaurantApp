@@ -7,6 +7,7 @@ interface User {
   email: string;
   role: string;
   isEmailConfirmed: boolean;
+  avatarUrl?: string;
 }
 
 interface AuthContextType {
@@ -22,20 +23,19 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (stored) {
-      try {
-        const parsedUser = JSON.parse(stored);
-        setUser(parsedUser);
-      } catch {
-        logout();
-      }
+  const [user, setUser] = useState<User | null>(() => {
+  const stored = localStorage.getItem('user');
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch {
+      return null;
     }
-  }, []);
+  }
+  return null;
+  });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const expireTimeStr = getCookie('refreshTokenExpire');

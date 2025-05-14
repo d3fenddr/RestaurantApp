@@ -36,6 +36,7 @@ const Login: React.FC = () => {
     } finally {
       setLoading(false);
     }
+    console.log({ email, password });
   };
 
   return (

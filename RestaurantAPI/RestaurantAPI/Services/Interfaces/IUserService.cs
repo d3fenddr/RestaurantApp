@@ -12,6 +12,7 @@ namespace RestaurantAPI.Services.Interfaces
         Task<UserDto?> GetUserByIdAsync(int id);
         Task<UserDto> CreateUserAsync(UserDto userDto);
         Task<bool> UpdateUserAsync(int id, UserDto userDto);
+        Task<bool> UpdateAvatarUrlAsync(int userId, string imageUrl);
         Task<bool> DeleteUserAsync(int id);
         Task<User> Authenticate(string email, string password);
         Task<ChangePasswordResult> ChangePasswordAsync(int userId, string oldPassword, string newPassword);

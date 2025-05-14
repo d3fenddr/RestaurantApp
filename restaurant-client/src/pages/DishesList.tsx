@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import { toast } from 'react-toastify';
 import { useCart } from '../context/CartContext';
 import './css/DishesList.css';
+import { useNavigate, Link } from 'react-router-dom';
 
 interface Dish {
   id: number;
@@ -21,6 +22,7 @@ const DishesList: React.FC = () => {
   const [error, setError] = useState<string>('');
   const { user } = useAuth();
   const { setCartCount } = useCart();
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get('/api/dishes', { withCredentials: true })
@@ -36,31 +38,34 @@ const DishesList: React.FC = () => {
   }, []);
 
   const addToCart = async (dishId: number) => {
-    if (!user) return;
-  
+    if (!user) {
+      toast.info('Please log in to add items to cart.');
+      navigate('/login');
+      return;
+    }
+
     try {
       const response = await axios.post('/api/cart', {
         userId: user.id,
         dishId,
         quantity: 1
       }, { withCredentials: true });
-  
+
       setCartCount(response.data.totalQuantity);
-  
+
       toast.success("Dish added to cart!", {
         autoClose: 2000,
         pauseOnHover: true,
         hideProgressBar: false,
         icon: () => <span>🛒</span>
       });
-      
+
     } catch (err) {
       toast.error("Failed to add dish.", {
         autoClose: 2000
       });
     }
   };
-  
 
   return (
     <div>
@@ -69,17 +74,15 @@ const DishesList: React.FC = () => {
       {error && <p>{error}</p>}
       <div className="dish-grid">
         {dishes.map(dish => (
-          <div key={dish.id} className="dish-card">
-            {dish.imageUrl && (
-              <img src={dish.imageUrl} alt={dish.name} className="dish-image" />
-            )}
+        <div key={dish.id} className="dish-card">
+          <Link to={`/dish/${dish.id}`} className="dish-card-link dish-content">
+            <img src={dish.imageUrl} alt={dish.name} className="dish-image" />
             <h2>{dish.name}</h2>
             <p>{dish.description}</p>
             <p>Price: {dish.price} ₼</p>
-            <button onClick={() => addToCart(dish.id)} className="add-button">
-              Add to Cart
-            </button>
-          </div>
+          </Link>
+          <button onClick={() => addToCart(dish.id)} className="add-button">Add to Cart</button>
+        </div>
         ))}
       </div>
       <Footer />

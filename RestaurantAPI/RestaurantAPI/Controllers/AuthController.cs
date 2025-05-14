@@ -125,7 +125,8 @@ namespace RestaurantAPI.Controllers
                         fullName = user.FullName,
                         email = user.Email,
                         role = user.Role,
-                        isEmailConfirmed = user.IsEmailConfirmed
+                        isEmailConfirmed = user.IsEmailConfirmed,
+                        avatarUrl = user.AvatarUrl
                     }
                 });
             }

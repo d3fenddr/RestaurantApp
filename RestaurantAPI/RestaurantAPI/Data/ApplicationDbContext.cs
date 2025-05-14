@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RestaurantAPI.Models;
 using System.ComponentModel.DataAnnotations.Schema;
-using RestaurantAPI.Models;
 
 namespace RestaurantAPI.Data;
 

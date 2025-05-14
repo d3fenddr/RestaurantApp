@@ -10,5 +10,7 @@
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public bool IsEmailConfirmed { get; set; } = false;
+        public string? AvatarUrl { get; set; }
+
     }
 }

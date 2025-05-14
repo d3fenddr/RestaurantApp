@@ -159,3 +159,14 @@
   background-color: var(--accent-hover);
   transform: scale(1.03);
 }
+
+.dish-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.dish-card-link {
+  text-decoration: none;
+  color: inherit;
+}

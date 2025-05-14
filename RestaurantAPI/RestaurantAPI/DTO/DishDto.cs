@@ -6,7 +6,8 @@
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public decimal Price { get; set; }
-        // Assuming DishCategory is represented by its Id
         public int DishCategoryId { get; set; }
+
+        public string ImageUrl { get; set; } = string.Empty;
     }
 }

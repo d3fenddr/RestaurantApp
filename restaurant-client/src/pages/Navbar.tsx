@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import './css/Navbar.css';
+import Avatar from '../components/ui/Avatar';
+import { FaShoppingCart } from 'react-icons/fa';
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
@@ -28,14 +30,17 @@ const Navbar: React.FC = () => {
       </div>
 
       <div className="navbar-right">
-        <Link to="/cart" className="cart-link">
-          🛒
-          {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-        </Link>
+      <Link to="/cart" className="cart-link">
+        <FaShoppingCart size={20} />
+        {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+      </Link>
 
         {isAuthenticated ? (
           <>
-            <Link to="/profile">{isAdmin ? 'Admin User' : 'Profile'}</Link>
+            <Link to="/profile" className="profile-link">
+              <Avatar imageUrl={user.avatarUrl} fullName={user.fullName} size={32} />
+              <span className="profile-name">{user.fullName}</span>
+            </Link>
             {isAdmin && <Link to="/admin">Admin Dashboard</Link>}
             <button onClick={handleLogout} title="Logout" className="logout-icon">
               <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20" fill="#fff">

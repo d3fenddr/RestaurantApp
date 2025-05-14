@@ -27,7 +27,8 @@ namespace RestaurantAPI.Services.Implementations
                     Name = d.Name,
                     Description = d.Description,
                     Price = d.Price,
-                    DishCategoryId = d.DishCategoryId
+                    DishCategoryId = d.DishCategoryId,
+                    ImageUrl = d.ImageUrl
                 })
                 .ToListAsync();
         }
@@ -44,7 +45,8 @@ namespace RestaurantAPI.Services.Implementations
                 Name = dish.Name,
                 Description = dish.Description,
                 Price = dish.Price,
-                DishCategoryId = dish.DishCategoryId
+                DishCategoryId = dish.DishCategoryId,
+                ImageUrl = dish.ImageUrl
             };
         }
 
@@ -55,7 +57,8 @@ namespace RestaurantAPI.Services.Implementations
                 Name = dishDto.Name,
                 Description = dishDto.Description,
                 Price = dishDto.Price,
-                DishCategoryId = dishDto.DishCategoryId
+                DishCategoryId = dishDto.DishCategoryId,
+                ImageUrl = dishDto.ImageUrl
             };
 
             _context.Dishes.Add(dish);
@@ -76,6 +79,17 @@ namespace RestaurantAPI.Services.Implementations
             dish.DishCategoryId = dishDto.DishCategoryId;
 
             _context.Dishes.Update(dish);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> UpdateImageUrlAsync(int dishId, string imageUrl)
+        {
+            var dish = await _context.Dishes.FindAsync(dishId);
+            if (dish == null)
+                return false;
+
+            dish.ImageUrl = imageUrl;
             await _context.SaveChangesAsync();
             return true;
         }
