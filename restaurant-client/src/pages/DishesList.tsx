@@ -6,14 +6,31 @@ import { toast } from 'react-toastify';
 import { useCart } from '../context/CartContext';
 import './css/DishesList.css';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from "react-i18next";
 
 interface Dish {
   id: number;
-  name: string;
-  description: string;
+  nameEn: string;
+  nameRu: string;
+  nameAz: string;
+  descriptionEn: string;
+  descriptionRu: string;
+  descriptionAz: string;
   price: number;
   dishCategoryId: number;
   imageUrl: string;
+}
+
+function getDishName(dish: Dish, lang: string) {
+  if (lang === "ru" && dish.nameRu) return dish.nameRu;
+  if (lang === "az" && dish.nameAz) return dish.nameAz;
+  return dish.nameEn || "";
+}
+
+function getDishDescription(dish: Dish, lang: string) {
+  if (lang === "ru" && dish.descriptionRu) return dish.descriptionRu;
+  if (lang === "az" && dish.descriptionAz) return dish.descriptionAz;
+  return dish.descriptionEn || "";
 }
 
 const DishesList: React.FC = () => {
@@ -23,6 +40,7 @@ const DishesList: React.FC = () => {
   const { user } = useAuth();
   const { setCartCount } = useCart();
   const navigate = useNavigate();
+  const { i18n } = useTranslation();
 
   useEffect(() => {
     axios.get('/api/dishes', { withCredentials: true })
@@ -74,15 +92,15 @@ const DishesList: React.FC = () => {
       {error && <p>{error}</p>}
       <div className="dish-grid">
         {dishes.map(dish => (
-        <div key={dish.id} className="dish-card">
-          <Link to={`/dish/${dish.id}`} className="dish-card-link dish-content">
-            <img src={dish.imageUrl} alt={dish.name} className="dish-image" />
-            <h2>{dish.name}</h2>
-            <p>{dish.description}</p>
-            <p>Price: {dish.price} ₼</p>
-          </Link>
-          <button onClick={() => addToCart(dish.id)} className="add-button">Add to Cart</button>
-        </div>
+          <div key={dish.id} className="dish-card">
+            <Link to={`/dish/${dish.id}`} className="dish-card-link dish-content">
+              <img src={dish.imageUrl} alt={getDishName(dish, i18n.language)} className="dish-image" />
+              <h2>{getDishName(dish, i18n.language)}</h2>
+              <p>{getDishDescription(dish, i18n.language)}</p>
+              <p>Price: {dish.price} ₼</p>
+            </Link>
+            <button onClick={() => addToCart(dish.id)} className="add-button">Add to Cart</button>
+          </div>
         ))}
       </div>
       <Footer />

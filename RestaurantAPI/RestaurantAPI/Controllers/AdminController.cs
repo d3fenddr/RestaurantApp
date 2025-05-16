@@ -110,8 +110,12 @@ namespace RestaurantAPI.Controllers
             var dish = await _context.Dishes.FindAsync(id);
             if (dish == null) return NotFound();
 
-            dish.Name = updatedDish.Name;
-            dish.Description = updatedDish.Description;
+            dish.NameEn = updatedDish.NameEn;
+            dish.NameRu = updatedDish.NameRu;
+            dish.NameAz = updatedDish.NameAz;
+            dish.DescriptionEn = updatedDish.DescriptionEn;
+            dish.DescriptionRu = updatedDish.DescriptionRu;
+            dish.DescriptionAz = updatedDish.DescriptionAz;
             dish.Price = updatedDish.Price;
             dish.ImageUrl = updatedDish.ImageUrl;
             dish.DishCategoryId = updatedDish.DishCategoryId;

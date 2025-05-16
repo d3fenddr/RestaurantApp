@@ -75,8 +75,8 @@ namespace RestaurantAPI.Data
             var savedCategories = context.Categories.ToList();
 
             var dishFaker = new Faker<Dish>()
-                .RuleFor(d => d.Name, f => f.Commerce.ProductName())
-                .RuleFor(d => d.Description, f => f.Lorem.Sentence())
+                .RuleFor(d => d.NameEn, f => f.Commerce.ProductName())
+                .RuleFor(d => d.DescriptionEn, f => f.Lorem.Sentence())
                 .RuleFor(d => d.Price, f => decimal.Parse(f.Commerce.Price(5, 30)))
                 .RuleFor(d => d.DishCategoryId, f => f.PickRandom(savedCategories).Id);
 
@@ -89,7 +89,7 @@ namespace RestaurantAPI.Data
 
                 dish.ImageUrl = imageUrl;
                 if (string.IsNullOrWhiteSpace(dish.ImageUrl))
-                    Console.WriteLine($"[ERROR] Dish ImageUrl not set for {dish.Name}");
+                    Console.WriteLine($"[ERROR] Dish ImageUrl not set for {dish.NameEn}");
 
                 dishes.Add(dish);
             }

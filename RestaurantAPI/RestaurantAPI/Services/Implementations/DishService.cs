@@ -24,8 +24,12 @@ namespace RestaurantAPI.Services.Implementations
                 .Select(d => new DishDto
                 {
                     Id = d.Id,
-                    Name = d.Name,
-                    Description = d.Description,
+                    NameEn = d.NameEn,
+                    NameRu = d.NameRu,
+                    NameAz = d.NameAz,
+                    DescriptionEn = d.DescriptionEn,
+                    DescriptionRu = d.DescriptionRu,
+                    DescriptionAz = d.DescriptionAz,
                     Price = d.Price,
                     DishCategoryId = d.DishCategoryId,
                     ImageUrl = d.ImageUrl
@@ -42,8 +46,12 @@ namespace RestaurantAPI.Services.Implementations
             return new DishDto
             {
                 Id = dish.Id,
-                Name = dish.Name,
-                Description = dish.Description,
+                NameEn = dish.NameEn,
+                NameRu = dish.NameRu,
+                NameAz = dish.NameAz,
+                DescriptionEn = dish.DescriptionEn,
+                DescriptionRu = dish.DescriptionRu,
+                DescriptionAz = dish.DescriptionAz,
                 Price = dish.Price,
                 DishCategoryId = dish.DishCategoryId,
                 ImageUrl = dish.ImageUrl
@@ -54,8 +62,12 @@ namespace RestaurantAPI.Services.Implementations
         {
             var dish = new Dish
             {
-                Name = dishDto.Name,
-                Description = dishDto.Description,
+                NameEn = dishDto.NameEn,
+                NameRu = dishDto.NameRu,
+                NameAz = dishDto.NameAz,
+                DescriptionEn = dishDto.DescriptionEn,
+                DescriptionRu = dishDto.DescriptionRu,
+                DescriptionAz = dishDto.DescriptionAz,
                 Price = dishDto.Price,
                 DishCategoryId = dishDto.DishCategoryId,
                 ImageUrl = dishDto.ImageUrl
@@ -73,8 +85,12 @@ namespace RestaurantAPI.Services.Implementations
             if (dish == null)
                 return false;
 
-            dish.Name = dishDto.Name;
-            dish.Description = dishDto.Description;
+            dish.NameEn = dishDto.NameEn;
+            dish.NameRu = dishDto.NameRu;
+            dish.NameAz = dishDto.NameAz;
+            dish.DescriptionEn = dishDto.DescriptionEn;
+            dish.DescriptionRu = dishDto.DescriptionRu;
+            dish.DescriptionAz = dishDto.DescriptionAz;
             dish.Price = dishDto.Price;
             dish.DishCategoryId = dishDto.DishCategoryId;
 

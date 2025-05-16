@@ -48,12 +48,18 @@ namespace RestaurantAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] DishDto dishDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); // <-- This will show you exactly what the problem is!
+            }
+
             var result = await _dishService.UpdateDishAsync(id, dishDto);
             if (!result)
                 return NotFound();
 
             return NoContent();
         }
+
 
         // DELETE: api/dishes/{id}
         [HttpDelete("{id}")]

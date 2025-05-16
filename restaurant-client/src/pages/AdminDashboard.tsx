@@ -4,10 +4,11 @@ import AdminModal from '../components/AdminModal';
 import ConfirmDialog from '../components/ConfirmDialog';
 import Pagination from '../components/Pagination';
 import {
-  getUsers, deleteUser, updateUser, addUser, IUser,
-  getDishes, deleteDish, updateDish, addDish, IDish,
+  getUsers, deleteUser, updateUser, IUser,
+  getDishes, deleteDish, updateDish, IDish,
   getOrders, deleteOrder, updateOrder, IOrder
 } from '../services/adminService';
+import AddDishModal from '../components/AddDishModal';
 
 type ViewType = 'users' | 'dishes' | 'orders';
 
@@ -21,6 +22,7 @@ const AdminDashboard: React.FC = () => {
 
   const [editItem, setEditItem] = useState<any>(null);
   const [confirmDelete, setConfirmDelete] = useState<{ id: number; type: ViewType } | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
 
   const itemsPerPage = 5;
 
@@ -86,12 +88,19 @@ const AdminDashboard: React.FC = () => {
           <button onClick={() => setView('orders')}>Orders</button>
         </div>
 
+        {view === 'dishes' && (
+          <button className="add-btn-modern" onClick={() => setAddOpen(true)}>
+            <span style={{ fontSize: 20, marginRight: 8 }}>＋</span>
+            Add Dish
+          </button>
+        )}
+
         <ul>
           {currentItems.map(item => (
             <li key={item.id}>
               <div className="item-info">
                 {view === 'users' && `${(item as IUser).fullName} - ${(item as IUser).email} - ${(item as IUser).role}`}
-                {view === 'dishes' && `${(item as IDish).name} - $${(item as IDish).price}`}
+                {view === 'dishes' && `${(item as IDish).nameEn} - $${(item as IDish).price}`}
                 {view === 'orders' && `Order #${(item as IOrder).id} - User: ${(item as IOrder).userId} - $${(item as IOrder).total}`}
               </div>
               <div className="item-actions">
@@ -109,7 +118,7 @@ const AdminDashboard: React.FC = () => {
         />
       </div>
 
-      {/* ВНЕ div.admin-dashboard */}
+      {/* Edit Modal */}
       <AdminModal
         title={`Edit ${view.slice(0, 1).toUpperCase() + view.slice(1).slice(0, -1)}`}
         isOpen={!!editItem}
@@ -129,10 +138,14 @@ const AdminDashboard: React.FC = () => {
             )}
             {view === 'dishes' && (
               <>
-                <input value={editItem.name} onChange={e => setEditItem({ ...editItem, name: e.target.value })} />
-                <input type="number" value={editItem.price} onChange={e => setEditItem({ ...editItem, price: Number(e.target.value) })} />
-                <input value={editItem.description} onChange={e => setEditItem({ ...editItem, description: e.target.value })} />
-                <input value={editItem.imageUrl} onChange={e => setEditItem({ ...editItem, imageUrl: e.target.value })} />
+                <input value={editItem.nameEn} onChange={e => setEditItem({ ...editItem, nameEn: e.target.value })} placeholder="Name (English)" />
+                <input value={editItem.nameRu} onChange={e => setEditItem({ ...editItem, nameRu: e.target.value })} placeholder="Name (Russian)" />
+                <input value={editItem.nameAz} onChange={e => setEditItem({ ...editItem, nameAz: e.target.value })} placeholder="Name (Azerbaijani)" />
+                <input type="number" value={editItem.price} onChange={e => setEditItem({ ...editItem, price: Number(e.target.value) })} placeholder="Price" />
+                <input value={editItem.descriptionEn} onChange={e => setEditItem({ ...editItem, descriptionEn: e.target.value })} placeholder="Description (English)" />
+                <input value={editItem.descriptionRu} onChange={e => setEditItem({ ...editItem, descriptionRu: e.target.value })} placeholder="Description (Russian)" />
+                <input value={editItem.descriptionAz} onChange={e => setEditItem({ ...editItem, descriptionAz: e.target.value })} placeholder="Description (Azerbaijani)" />
+                <input value={editItem.imageUrl} onChange={e => setEditItem({ ...editItem, imageUrl: e.target.value })} placeholder="Image URL" />
               </>
             )}
             {view === 'orders' && (
@@ -152,6 +165,17 @@ const AdminDashboard: React.FC = () => {
         onConfirm={handleDelete}
         onCancel={() => setConfirmDelete(null)}
       />
+
+      {/* Add Dish Modal */}
+      {addOpen && (
+        <AddDishModal
+          onClose={() => setAddOpen(false)}
+          onAdded={async () => {
+            setDishes(await getDishes());
+            setAddOpen(false);
+          }}
+        />
+      )}
     </>
   );
 };

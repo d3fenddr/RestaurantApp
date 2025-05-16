@@ -9,12 +9,17 @@ export interface IUser {
 
 export interface IDish {
   id: number;
-  name: string;
+  nameEn: string;
+  nameRu: string;
+  nameAz: string;
+  descriptionEn: string;
+  descriptionRu: string;
+  descriptionAz: string;
   price: number;
-  description: string;
-  imageUrl: string;
   dishCategoryId: number;
+  imageUrl: string;
 }
+
 
 export interface IOrderItem {
   dishId: number;
