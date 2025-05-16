@@ -21,7 +21,7 @@ const DishCard: React.FC<DishCardProps> = ({ name, description, price, imageUrl,
       />
       <h2>{name}</h2>
       <p>{description}</p>
-      <p>Price: {price} ₼</p>
+      <p>Price: {price} $</p>
       <button onClick={onAddToCart} className="add-button">
         Add to Cart
       </button>

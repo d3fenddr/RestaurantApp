@@ -3,12 +3,25 @@
   --color-text: #3B1F0B;
   --color-accent: #C1440E;
   --color-accent-dark: #A83706;
-  --color-card-shadow: rgba(193, 68, 14, 0.15);
   --color-border-light: #FFE1D3;
-  --color-toast-success: #E7522C;
-  --color-toast-error: #8C2F00;
+  --color-card-bg: #ffffff;
+  --color-card-shadow: rgba(193, 68, 14, 0.1);
+  --color-toast-success: #28a745;
+  --color-toast-error: #b02a1a;
 
   --font-main: 'Segoe UI', sans-serif;
+}
+
+[data-theme='dark'] {
+  --color-bg: #121212;
+  --color-text: #f5f5f5;
+  --color-accent: #ff7043;
+  --color-accent-dark: #ff5722;
+  --color-border-light: #3a3a3a;
+  --color-card-bg: #1f1f1f;
+  --color-card-shadow: rgba(255, 112, 67, 0.12);
+  --color-toast-success: #4caf50;
+  --color-toast-error: #ef5350;
 }
 
 body {

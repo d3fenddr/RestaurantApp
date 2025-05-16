@@ -1,0 +1,12 @@
+{
+  "home": "Home",
+  "menu": "Menu",
+  "about": "About",
+  "contact": "Contact",
+  "terms": "Terms",
+  "login": "Login",
+  "register": "Register",
+  "logout": "Logout",
+  "profile": "Profile",
+  "admin": "Admin"
+}

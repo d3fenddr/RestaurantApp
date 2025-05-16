@@ -82,12 +82,12 @@ const CartPage: React.FC = () => {
                 <span>{item.quantity}</span>
                 <button onClick={() => updateQuantity(item.dishId, 1)}>+</button>
               </div>
-              <p>Price: {dish.price * item.quantity} ₼</p>
+              <p>Price: {dish.price * item.quantity} $</p>
             </div>
           );
         })}
       </div>
-      <h3>Total: {total.toFixed(2)} ₼</h3>
+      <h3>Total: {total.toFixed(2)} $</h3>
       {items.length > 0 && (
         <div style={{ maxWidth: "400px", marginTop: "20px" }}>
           <PayPalCheckout />

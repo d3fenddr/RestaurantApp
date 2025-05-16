@@ -8,7 +8,11 @@ const PayPalCheckout = () => {
   const { user } = useAuth();
 
   return (
-    <PayPalScriptProvider options={{ clientId: "AU3f-Pr5ddjRdvyKnH72pb0cTMmPjEhnUXTh2Y0RPuW_5KHEjz8RS5XY6M2JdNcToF5cZRn8I1b9gbxi" }}>
+    <PayPalScriptProvider options={{
+    clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID!,
+    currency: "USD",
+    components: "buttons",
+  }}>
       <PayPalButtons
         style={{ layout: "vertical" }}
         createOrder={(_, actions) => {

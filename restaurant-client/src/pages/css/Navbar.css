@@ -9,7 +9,9 @@
   color: #fff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   font-family: 'Cal Sans', sans-serif;
-  font-weight: 100; 
+  font-weight: 100;
+  position: relative;
+  z-index: 100;
 }
 
 .navbar-left,
@@ -96,4 +98,100 @@
 
 .profile-name {
   font-size: 16px;
+}
+
+/* Language selector (dropdown) */
+.lang-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+
+.lang-dropdown:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.lang-menu {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  min-width: 140px;
+}
+
+.lang-option {
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.lang-option:hover {
+  background-color: #f0f0f0;
+}
+
+.lang-flag {
+  width: 20px;
+  height: 14px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+/* Dark theme override */
+[data-theme='dark'] .navbar {
+  background-color: #1a1a1a;
+  color: var(--color-text);
+}
+
+[data-theme='dark'] .navbar a,
+[data-theme='dark'] .profile-link,
+[data-theme='dark'] .cart-link {
+  color: var(--color-text);
+}
+
+[data-theme='dark'] .navbar a:hover,
+[data-theme='dark'] .profile-link:hover,
+[data-theme='dark'] .cart-link:hover {
+  color: var(--color-accent);
+}
+
+[data-theme='dark'] .lang-dropdown {
+  border: 1px solid var(--color-text);
+  color: var(--color-text);
+}
+
+[data-theme='dark'] .lang-dropdown:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme='dark'] .lang-menu {
+  background-color: #2a2a2a;
+  border-color: #444;
+}
+
+[data-theme='dark'] .lang-option {
+  color: #eee;
+}
+
+[data-theme='dark'] .lang-option:hover {
+  background-color: #3a3a3a;
 }

@@ -1,3 +1,4 @@
+
 /* Сброс и базовые настройки */
 *,
 *::before,
@@ -28,7 +29,7 @@
 /* Общие стили */
 html,
 body {
-  background: linear-gradient(to bottom right, #fff5f0, #fce5d9);
+  background-color: var(--color-bg);
   color: var(--primary-text);
   font-family: var(--font-family);
   font-size: 16px;
@@ -260,4 +261,45 @@ button:hover:not(:disabled) {
     margin: 1rem;
     width: 90%;
   }
+}
+
+[data-theme="dark"] .dish-card,
+[data-theme="dark"] .card,
+[data-theme="dark"] .cart-item,
+[data-theme="dark"] .dish-page,
+[data-theme="dark"] .modal,
+[data-theme="dark"] .form-container {
+  background-color: var(--color-card-bg);
+  color: var(--color-text);
+  border-color: var(--color-border-light);
+}
+
+[data-theme="dark"] .navbar {
+  background-color: #1a1a1a;
+}
+
+[data-theme="dark"] .navbar a,
+[data-theme="dark"] .profile-link,
+[data-theme="dark"] .cart-link {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .navbar a:hover,
+[data-theme="dark"] .profile-link:hover,
+[data-theme="dark"] .cart-link:hover {
+  color: var(--color-accent);
+}
+
+[data-theme="dark"] .footer {
+  background-color: #1e1e1e;
+  color: var(--color-text);
+  border-top: 1px solid var(--color-border-light);
+}
+
+[data-theme="dark"] .footer-links a {
+  color: var(--color-accent);
+}
+
+[data-theme="dark"] .footer-links a:hover {
+  color: var(--color-accent-dark);
 }
