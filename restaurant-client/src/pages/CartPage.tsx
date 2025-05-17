@@ -96,9 +96,9 @@ const CartPage: React.FC = () => {
           );
         })}
       </div>
-      <p>{t('cart-total')}: {total.toFixed(2)} $</p>
+      <p className="cart-total">{t('cart-total')}: {total.toFixed(2)} $</p>
       {items.length > 0 && (
-        <div style={{ maxWidth: "400px", marginTop: "20px" }}>
+        <div style={{ maxWidth: "400px", margin: "20px auto 0 auto" }}>
           <PayPalCheckout />
         </div>
       )}
