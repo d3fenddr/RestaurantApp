@@ -20,6 +20,7 @@ interface Dish {
   nameRu: string;
   nameAz: string;
   price: number;
+  imageUrl?: string;
 }
 
 const CartPage: React.FC = () => {
@@ -85,13 +86,18 @@ const CartPage: React.FC = () => {
           if (!dish) return null;
           return (
             <div key={item.id} className="cart-item">
-              <h3>{getDishName(dish)}</h3>
+              <img
+                src={dish.imageUrl || '/food-restaurant-icon.svg'}
+                alt={getDishName(dish)}
+                className="dish-image"
+              />
+              <h3 style={{ color: 'var(--accent-color)', fontWeight: 700, margin: '12px 0 8px 0', fontFamily: 'Cal Sans, sans-serif', fontSize: '18px', textAlign: 'center' }}>{getDishName(dish)}</h3>
               <div className="quantity-controls">
                 <button onClick={() => updateQuantity(item.dishId, -1)}>-</button>
                 <span>{item.quantity}</span>
                 <button onClick={() => updateQuantity(item.dishId, 1)}>+</button>
               </div>
-              <p>Price: {dish.price * item.quantity} $</p>
+              <p style={{ color: '#4b2b1b', fontSize: '15px', margin: '4px 0', textAlign: 'center' }}>{t('cart-total')}: {dish.price * item.quantity} $</p>
             </div>
           );
         })}
