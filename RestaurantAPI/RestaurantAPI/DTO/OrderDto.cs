@@ -6,6 +6,7 @@
         public int UserId { get; set; }
         public DateTime OrderDate { get; set; }
         public decimal Total { get; set; }
-        public List<OrderItemDto> OrderItems { get; set; } = new List<OrderItemDto>();
+        public string Status { get; set; } = "Pending";
+        public List<OrderItemDto> OrderItems { get; set; } = new();
     }
 }

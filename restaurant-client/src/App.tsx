@@ -17,6 +17,9 @@ import Contact from './pages/Contact';
 import Terms from './pages/Terms';
 import Home from './pages/Home';
 import ForgotPassword from './pages/ForgotPassword';
+import OrderListPage from './pages/OrderListPage';
+import DeliveryPage from './pages/DeliveryPage';
+import ReceiptPage from './pages/ReceiptPage';
 
 import { useAuth } from './context/AuthContext';
 import { useCart } from './context/CartContext';
@@ -47,6 +50,9 @@ export default function App() {
         <Route path="/dishes" element={<DishesList />} />
         <Route path="/dish/:id" element={<DishPage />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/orders" element={<OrderListPage />} />
+        <Route path="/delivery/:orderId" element={<DeliveryPage />} />
+        <Route path="/receipt/:orderId" element={<ReceiptPage />} />
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

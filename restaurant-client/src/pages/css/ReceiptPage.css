@@ -1,0 +1,33 @@
+.receipt-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.receipt-card {
+  background: #fffdf7;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+}
+
+.receipt-card p {
+  font-size: 15px;
+  margin: 6px 0;
+}
+
+.receipt-card h3 {
+  margin-top: 20px;
+}
+
+.receipt-card ul {
+  list-style: none !important;
+  padding-left: 0 !important;
+  margin: 0 !important;
+}
+
+.receipt-card li {
+  margin-bottom: 8px;
+  font-size: 15px;
+  list-style: none !important;
+}

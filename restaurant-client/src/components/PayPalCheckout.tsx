@@ -9,23 +9,21 @@ const PayPalCheckout = () => {
 
   return (
     <PayPalScriptProvider options={{
-    clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID!,
-    currency: "USD",
-    components: "buttons",
-  }}>
+      clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID!,
+      currency: "USD",
+      components: "buttons",
+    }}>
       <PayPalButtons
         style={{ layout: "vertical" }}
         createOrder={(_, actions) => {
           return actions.order!.create({
             intent: "CAPTURE",
-            purchase_units: [
-              {
-                amount: {
-                  currency_code: "USD",
-                  value: totalPrice.toFixed(2),
-                },
+            purchase_units: [{
+              amount: {
+                currency_code: "USD",
+                value: totalPrice.toFixed(2),
               },
-            ],
+            }],
           });
         }}
         onApprove={async (_, actions) => {

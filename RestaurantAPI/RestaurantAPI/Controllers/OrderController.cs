@@ -60,5 +60,28 @@ namespace RestaurantAPI.Controllers
 
             return NoContent();
         }
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<IEnumerable<OrderDto>>> GetByUserId(int userId)
+        {
+            var orders = await _orderService.GetOrdersByUserIdAsync(userId);
+            return Ok(orders);
+        }
+
+        [HttpGet("user/{userId}/latest")]
+        public async Task<ActionResult<OrderDto>> GetLatestByUserId(int userId)
+        {
+            var order = await _orderService.GetLatestOrderByUserIdAsync(userId);
+            if (order == null) return NotFound();
+            return Ok(order);
+        }
+
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateStatus(int id, [FromBody] string status)
+        {
+            var result = await _orderService.UpdateOrderStatusAsync(id, status);
+            if (!result) return BadRequest("Invalid order or status");
+            return NoContent();
+        }
+
     }
 }

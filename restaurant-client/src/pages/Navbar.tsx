@@ -37,6 +37,7 @@ const Navbar: React.FC = () => {
       <div className="navbar-left">
         <Link to="/">{t('home')}</Link>
         <Link to="/dishes">{t('menu')}</Link>
+        {isAuthenticated && <Link to="/orders">{t('my-orders')}</Link>}
         <Link to="/about">{t('about')}</Link>
         <Link to="/contact">{t('contact')}</Link>
         <Link to="/terms">{t('terms')}</Link>

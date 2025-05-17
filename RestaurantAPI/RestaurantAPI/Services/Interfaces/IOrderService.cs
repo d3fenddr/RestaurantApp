@@ -11,5 +11,8 @@ namespace RestaurantAPI.Services.Interfaces
         Task<OrderDto> CreateOrderAsync(OrderDto orderDto);
         Task<bool> UpdateOrderAsync(int id, OrderDto orderDto);
         Task<bool> DeleteOrderAsync(int id);
+        Task<IEnumerable<OrderDto>> GetOrdersByUserIdAsync(int userId);
+        Task<OrderDto?> GetLatestOrderByUserIdAsync(int userId);
+        Task<bool> UpdateOrderStatusAsync(int id, string status);
     }
 }
