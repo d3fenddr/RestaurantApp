@@ -1,8 +1,8 @@
 ﻿using MailKit.Net.Smtp;
 using MimeKit;
-using Microsoft.Extensions.Configuration;
 using RestaurantAPI.Services.Interfaces;
-using System.Threading.Tasks;
+//using Microsoft.Extensions.Configuration;
+//using System.Threading.Tasks;
 
 namespace RestaurantAPI.Services.Implementations
 {

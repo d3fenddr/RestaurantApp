@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestaurantAPI.DTO;
 using RestaurantAPI.Services.Interfaces;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+//using System.Collections.Generic;
+//using System.Threading.Tasks;
 
 namespace RestaurantAPI.Controllers
 {
