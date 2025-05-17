@@ -8,5 +8,21 @@
   "register": "Register",
   "logout": "Logout",
   "profile": "Profile",
-  "admin": "Admin"
+  "admin": "Admin",
+  "page-title": "Dishes",
+  "about-title": "About Us",
+  "about-description": "We are a modern restaurant offering the best dishes from around the world.",
+  "about-team-title": "Our Team",
+  "about-team-description": "Our team consists of experienced chefs and friendly staff.",
+  "welcome": "Welcome to our restaurant",
+  "viewMenu": "View menu",
+  "reviews": "Customer reviews",
+  "home-description": "Experience the taste of tradition and innovation. We serve premium dishes made from fresh, local ingredients with love and care.",
+  "contact-title": "Contact Us",
+  "contact-email": "Email: support@schnellherd.com",
+  "contact-phone1": "Phone 1: +994 (051) 441-4944",
+  "contact-phone2": "Phone 2: +994 (051) 394-4224",
+  "contact-address": "Address: 70 Koroğlu Rəhimov, Baku 1009",
+  "terms-title": "Terms & Conditions",
+  "terms-description": "By using our service, you agree to the terms of use. All orders are subject to availability and local delivery rules. We reserve the right to change pricing or menu items at any time. Please read carefully before proceeding."
 }

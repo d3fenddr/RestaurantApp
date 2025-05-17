@@ -1,14 +1,17 @@
 import React from 'react';
 import RestaurantMap from '../components/RestaurantMap';
+import { useTranslation } from 'react-i18next';
 
 const Contact: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="container" style={{ padding: '2rem' }}>
-      <h1>Contact Us</h1>
-      <p>Email: support@schnellherd.com</p>
-      <p>Phone 1: +994 (051) 441-4944</p>
-      <p>Phone 2: +994 (051) 394-4224</p>
-      <p>Address: 70 Koroğlu Rəhimov, Bakı 1009</p>
+      <h1>{t('contact-title')}</h1>
+      <p>{t('contact-email')}</p>
+      <p>{t('contact-phone1')}</p>
+      <p>{t('contact-phone2')}</p>
+      <p>{t('contact-address')}</p>
 
       <div style={{ marginTop: '1.5rem' }}>
         <RestaurantMap />

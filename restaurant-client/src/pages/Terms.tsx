@@ -1,14 +1,13 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Terms: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="container">
-      <h1>Terms & Conditions</h1>
-      <p>
-        By using our service, you agree to the terms of use. All orders are subject to availability
-        and local delivery rules. We reserve the right to change pricing or menu items at any time.
-        Please read carefully before proceeding.
-      </p>
+      <h1>{t('terms-title')}</h1>
+      <p>{t('terms-description')}</p>
     </div>
   );
 };

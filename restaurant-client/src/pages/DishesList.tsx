@@ -40,7 +40,7 @@ const DishesList: React.FC = () => {
   const { user } = useAuth();
   const { setCartCount } = useCart();
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
 
   useEffect(() => {
     axios.get('/api/dishes', { withCredentials: true })
@@ -87,7 +87,7 @@ const DishesList: React.FC = () => {
 
   return (
     <div>
-      <h1 className="page-title">Dishes</h1>
+      <h1 className="page-title">{t('page-title')}</h1>
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
       <div className="dish-grid">
