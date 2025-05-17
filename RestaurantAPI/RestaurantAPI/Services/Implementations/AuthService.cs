@@ -83,7 +83,7 @@ namespace RestaurantAPI.Services.Implementations
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(15), // Access Token: 15 минут
+                expires: DateTime.UtcNow.AddMinutes(15), 
                 signingCredentials: credentials
             );
 
@@ -95,7 +95,7 @@ namespace RestaurantAPI.Services.Implementations
             var refreshToken = new RefreshToken
             {
                 Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-                Expires = DateTime.UtcNow.AddDays(7), // Refresh Token: 7 дней
+                Expires = DateTime.UtcNow.AddDays(7), 
                 Created = DateTime.UtcNow,
                 UserId = userId
             };

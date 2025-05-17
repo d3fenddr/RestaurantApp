@@ -17,7 +17,6 @@ namespace RestaurantAPI.Controllers
             _orderService = orderService;
         }
 
-        // GET: api/orders
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrderDto>>> GetAll()
         {
@@ -25,7 +24,6 @@ namespace RestaurantAPI.Controllers
             return Ok(orders);
         }
 
-        // GET: api/orders/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderDto>> GetById(int id)
         {
@@ -36,7 +34,6 @@ namespace RestaurantAPI.Controllers
             return Ok(order);
         }
 
-        // POST: api/orders
         [HttpPost]
         public async Task<ActionResult<OrderDto>> Create([FromBody] OrderDto orderDto)
         {
@@ -44,7 +41,6 @@ namespace RestaurantAPI.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdOrder.Id }, createdOrder);
         }
 
-        // PUT: api/orders/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] OrderDto orderDto)
         {
@@ -55,7 +51,6 @@ namespace RestaurantAPI.Controllers
             return NoContent();
         }
 
-        // DELETE: api/orders/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

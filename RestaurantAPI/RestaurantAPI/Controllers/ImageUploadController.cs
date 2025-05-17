@@ -24,7 +24,6 @@ namespace RestaurantAPI.Controllers
             _dishService = dishService;
         }
 
-        // ---------------------- USER ----------------------
 
         [Authorize]
         [HttpPost("user-avatar")]
@@ -72,7 +71,6 @@ namespace RestaurantAPI.Controllers
             return Ok(new ImageUploadResponseDto { ImageUrl = newUrl });
         }
 
-        // ---------------------- DISH ----------------------
 
         [Authorize(Roles = "Admin")]
         [HttpPost("dish-photo/{dishId}")]

@@ -9,7 +9,6 @@
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
         public decimal Total { get; set; }
 
-        // Collection of ordered items
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
 }

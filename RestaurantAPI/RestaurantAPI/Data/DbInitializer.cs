@@ -20,7 +20,6 @@ namespace RestaurantAPI.Data
 
             var blobService = services.GetRequiredService<IBlobStorageService>();
 
-            // --- USERS ---
             var userFaker = new Faker<User>()
                 .RuleFor(u => u.FullName, f => f.Name.FullName())
                 .RuleFor(u => u.Email, (f, u) => f.Internet.Email(u.FullName))
@@ -34,20 +33,18 @@ namespace RestaurantAPI.Data
             {
                 var user = users[i];
                 var avatarUrl = await blobService.UploadFileAsync(await DownloadRandomImage(), "users");
-                // Console.WriteLine($"[USER {i}] Avatar uploaded: {avatarUrl}");
+                
 
                 user.AvatarUrl = avatarUrl;
                 if (string.IsNullOrWhiteSpace(user.AvatarUrl))
                     Console.WriteLine($"[ERROR] Avatar URL not set for user {user.FullName}");
             }
 
-            // Admin user
             users[0].FullName = "Admin User";
             users[0].Email = "admin@mail.com";
             users[0].PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123");
             users[0].Role = "Admin";
 
-            // Test user
             users[1].FullName = "Test User";
             users[1].Email = "test@mail.com";
             users[1].PasswordHash = BCrypt.Net.BCrypt.HashPassword("test123");
@@ -55,7 +52,6 @@ namespace RestaurantAPI.Data
             context.Users.AddRange(users);
             await context.SaveChangesAsync();
 
-            // --- CATEGORIES ---
             var categoryFaker = new Faker<DishCategory>()
                 .RuleFor(c => c.Name, f => f.Commerce.Categories(1).First())
                 .RuleFor(c => c.Description, f => f.Lorem.Sentence());
@@ -71,7 +67,6 @@ namespace RestaurantAPI.Data
             context.Categories.AddRange(categories);
             await context.SaveChangesAsync();
 
-            // --- DISHES ---
             var savedCategories = context.Categories.ToList();
 
             var dishFaker = new Faker<Dish>()
@@ -85,7 +80,6 @@ namespace RestaurantAPI.Data
             {
                 var dish = dishFaker.Generate();
                 var imageUrl = await blobService.UploadFileAsync(await DownloadRandomImage(), "dishes");
-                // Console.WriteLine($"[DISH {i}] Image uploaded: {imageUrl}");
 
                 dish.ImageUrl = imageUrl;
                 if (string.IsNullOrWhiteSpace(dish.ImageUrl))
@@ -97,7 +91,6 @@ namespace RestaurantAPI.Data
             context.Dishes.AddRange(dishes);
             await context.SaveChangesAsync();
 
-            // --- CART ITEMS ---
             var testUser = context.Users.FirstOrDefault(u => u.Email == "test@mail.com");
             if (testUser != null)
             {
@@ -111,7 +104,6 @@ namespace RestaurantAPI.Data
                 await context.SaveChangesAsync();
             }
 
-            // --- ORDER + ORDER ITEMS ---
             if (testUser != null)
             {
                 var order = new Order

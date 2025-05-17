@@ -17,7 +17,7 @@ namespace RestaurantAPI.Controllers
             _categoryService = categoryService;
         }
 
-        // GET: api/categories
+        
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DishCategoryDto>>> GetAllCategories()
         {
@@ -25,7 +25,6 @@ namespace RestaurantAPI.Controllers
             return Ok(categories);
         }
 
-        // GET: api/categories/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<DishCategoryDto>> GetCategoryById(int id)
         {
@@ -36,7 +35,6 @@ namespace RestaurantAPI.Controllers
             return Ok(category);
         }
 
-        // POST: api/categories
         [HttpPost]
         public async Task<ActionResult<DishCategoryDto>> CreateCategory([FromBody] DishCategoryDto categoryDto)
         {
@@ -44,7 +42,6 @@ namespace RestaurantAPI.Controllers
             return CreatedAtAction(nameof(GetCategoryById), new { id = createdCategory.Id }, createdCategory);
         }
 
-        // PUT: api/categories/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategory(int id, [FromBody] DishCategoryDto categoryDto)
         {
@@ -55,7 +52,6 @@ namespace RestaurantAPI.Controllers
             return NoContent();
         }
 
-        // DELETE: api/categories/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {

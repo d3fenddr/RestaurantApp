@@ -50,7 +50,7 @@ namespace RestaurantAPI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState); // <-- This will show you exactly what the problem is!
+                return BadRequest(ModelState);
             }
 
             var result = await _dishService.UpdateDishAsync(id, dishDto);
@@ -61,7 +61,6 @@ namespace RestaurantAPI.Controllers
         }
 
 
-        // DELETE: api/dishes/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

@@ -10,6 +10,6 @@
         public Dish Dish { get; set; } = null!;
 
         public int Quantity { get; set; }
-        public decimal Price { get; set; } // Price at the time of order
+        public decimal Price { get; set; } 
     }
 }

@@ -20,8 +20,6 @@ namespace RestaurantAPI.Controllers
             _context = context;
         }
 
-        // ========= USERS =========
-
         [HttpGet("users")]
         public async Task<IActionResult> GetUsers()
         {
@@ -84,7 +82,6 @@ namespace RestaurantAPI.Controllers
             return NoContent();
         }
 
-        // ========= DISHES =========
 
         [HttpGet("dishes")]
         public async Task<IActionResult> GetDishes()
@@ -135,7 +132,6 @@ namespace RestaurantAPI.Controllers
             return NoContent();
         }
 
-        // ========= ORDERS =========
         [HttpGet("orders")]
         public async Task<IActionResult> GetOrders()
         {

@@ -10,9 +10,8 @@
         public string DescriptionRu { get; set; } = string.Empty;
         public string DescriptionAz { get; set; } = string.Empty;
         public decimal Price { get; set; }
-        public string ImageUrl { get; set; } = string.Empty; // Azure Blob Storage URL
+        public string ImageUrl { get; set; } = string.Empty; 
 
-        // Foreign key to Category
         public int DishCategoryId { get; set; }
         public DishCategory? DishCategory { get; set; } = null!;
     }

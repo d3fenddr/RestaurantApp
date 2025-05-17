@@ -22,7 +22,7 @@ namespace RestaurantAPI.Services.Implementations
         {
             return await _context.CartItems
                 .Where(ci => ci.UserId == userId)
-                .Include(ci => ci.Dish) // обязательно!
+                .Include(ci => ci.Dish) 
                 .Select(ci => new CartItemDto
                 {
                     Id = ci.Id,

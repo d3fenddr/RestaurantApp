@@ -49,7 +49,6 @@ public class Startup
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IBlobStorageService, BlobStorageService>();
 
-        // Configure JWT authentication: read token from cookie "accessToken".
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {

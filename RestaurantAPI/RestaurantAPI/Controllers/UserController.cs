@@ -20,7 +20,6 @@ namespace RestaurantAPI.Controllers
             _userService = userService;
         }
 
-        // GET: api/users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetAll()
         {
@@ -28,7 +27,6 @@ namespace RestaurantAPI.Controllers
             return Ok(users);
         }
 
-        // GET: api/users/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetById(int id)
         {
@@ -39,7 +37,6 @@ namespace RestaurantAPI.Controllers
             return Ok(user);
         }
 
-        // POST: api/users
         [HttpPost]
         public async Task<ActionResult<UserDto>> Create([FromBody] UserDto userDto)
         {
@@ -47,7 +44,6 @@ namespace RestaurantAPI.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdUser.Id }, createdUser);
         }
 
-        // PUT: api/users/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] UserDto userDto)
         {
@@ -58,7 +54,6 @@ namespace RestaurantAPI.Controllers
             return NoContent();
         }
 
-        // DELETE: api/users/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -69,7 +64,6 @@ namespace RestaurantAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/users/change-password
         [Authorize]
         [HttpPost("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
