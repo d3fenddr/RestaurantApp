@@ -33,5 +33,16 @@
   "cart-empty": "Ваша корзина пуста.",
   "cart-increase": "Увеличить количество",
   "cart-decrease": "Уменьшить количество",
-  "my-orders": "Мои заказы"
+  "my-orders": "Мои заказы",
+  "order-date": "Дата",
+  "order-total": "Итого",
+  "order-status": "Статус",
+  "order-dishes": "Блюда",
+  "order-delivery": "Доставка",
+  "order-receipt": "Чек",
+  "order-on-the-way": "Ваш заказ в пути...",
+  "percent": "%",
+  "dish.Rustic Soft Keyboard": "Рустикальная мягкая клавиатура",
+  "dish.Tasty Concrete Bike": "Вкусный бетонный велосипед",
+  "dish.Generic Plastic Chicken": "Обычная пластиковая курица"
 }

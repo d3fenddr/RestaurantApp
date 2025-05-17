@@ -24,3 +24,15 @@
     color: var(--accent-hover);
   }
   
+  [data-theme='dark'] .footer {
+    background-color: var(--color-card-bg);
+    color: var(--color-text);
+    border-top: 1px solid var(--color-border-light);
+  }
+  [data-theme='dark'] .footer-links a {
+    color: var(--color-accent);
+  }
+  [data-theme='dark'] .footer-links a:hover {
+    color: var(--color-accent-dark);
+  }
+  

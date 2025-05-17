@@ -31,3 +31,19 @@
   font-size: 15px;
   list-style: none !important;
 }
+
+[data-theme='dark'] .receipt-container {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+[data-theme='dark'] .receipt-card {
+  background: var(--color-card-bg);
+  color: var(--color-text);
+  border-color: var(--color-border-light);
+}
+[data-theme='dark'] .receipt-card p,
+[data-theme='dark'] .receipt-card h3,
+[data-theme='dark'] .receipt-card h2,
+[data-theme='dark'] .receipt-card li {
+  color: var(--color-text);
+}

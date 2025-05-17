@@ -170,3 +170,18 @@
   text-decoration: none;
   color: inherit;
 }
+
+[data-theme='dark'] .dish-card {
+  background: var(--color-card-bg);
+  color: var(--color-text);
+  border-color: var(--color-border-light);
+}
+[data-theme='dark'] .page-title {
+  color: var(--color-accent);
+}
+[data-theme='dark'] .dish-card h2 {
+  color: var(--color-accent);
+}
+[data-theme='dark'] .dish-card p {
+  color: var(--color-text);
+}

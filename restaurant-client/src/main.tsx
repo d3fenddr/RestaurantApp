@@ -21,8 +21,8 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <CartProvider>
+      <CartProvider>
+        <AuthProvider>
           <ThemeProvider>
             <App />
             <ToastContainer
@@ -36,8 +36,8 @@ root.render(
               pauseOnHover
             />
           </ThemeProvider>
-        </CartProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </CartProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

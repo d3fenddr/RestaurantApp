@@ -125,3 +125,26 @@
   font-weight: 500;
   cursor: pointer;
 }
+
+[data-theme='dark'] .modal,
+[data-theme='dark'] .modal-content {
+  background: var(--color-card-bg);
+  color: var(--color-text);
+  border-color: var(--color-border-light);
+}
+[data-theme='dark'] .modal-bg {
+  background: rgba(0,0,0,0.7);
+}
+[data-theme='dark'] .modal-body input,
+[data-theme='dark'] .modal-body select {
+  background: var(--color-bg);
+  color: var(--color-text);
+  border-color: var(--color-border-light);
+}
+[data-theme='dark'] .modal-body button {
+  background-color: var(--color-accent);
+  color: #fff;
+}
+[data-theme='dark'] .modal-body button:hover {
+  background-color: var(--color-accent-dark);
+}

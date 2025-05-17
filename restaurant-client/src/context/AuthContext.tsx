@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from './CartContext';
 
 interface User {
   id: number;
@@ -24,18 +25,19 @@ const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(() => {
-  const stored = localStorage.getItem('user');
-  if (stored) {
-    try {
-      return JSON.parse(stored);
-    } catch {
-      return null;
+    const stored = localStorage.getItem('user');
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch {
+        return null;
+      }
     }
-  }
-  return null;
+    return null;
   });
 
   const navigate = useNavigate();
+  const { setCartCount } = useCart();
 
   useEffect(() => {
     const expireTimeStr = getCookie('refreshTokenExpire');
@@ -59,6 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     localStorage.removeItem('user');
     setUser(null);
+    setCartCount(0);
     navigate('/login');
   };
 

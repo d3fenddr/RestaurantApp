@@ -1,4 +1,3 @@
-
 /* Сброс и базовые настройки */
 *,
 *::before,
@@ -302,4 +301,71 @@ button:hover:not(:disabled) {
 
 [data-theme="dark"] .footer-links a:hover {
   color: var(--color-accent-dark);
+}
+
+/* Общие стили для темной темы */
+[data-theme='dark'] body,
+[data-theme='dark'] html {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+[data-theme='dark'] h1, [data-theme='dark'] h2, [data-theme='dark'] h3, [data-theme='dark'] h4, [data-theme='dark'] h5, [data-theme='dark'] h6 {
+  color: var(--color-accent);
+}
+
+[data-theme='dark'] .data-table th,
+[data-theme='dark'] .data-table td {
+  border-color: var(--color-border-light);
+  color: var(--color-text);
+}
+
+[data-theme='dark'] .error {
+  color: var(--color-toast-error);
+}
+[data-theme='dark'] .success {
+  color: var(--color-toast-success);
+}
+
+[data-theme='dark'] a {
+  color: var(--color-accent);
+}
+[data-theme='dark'] a:hover {
+  color: var(--color-accent-dark);
+}
+
+[data-theme='dark'] button,
+[data-theme='dark'] .modal-button,
+[data-theme='dark'] .primary-btn {
+  background-color: var(--color-accent);
+  color: #fff;
+}
+[data-theme='dark'] button:hover,
+[data-theme='dark'] .modal-button:hover,
+[data-theme='dark'] .primary-btn:hover {
+  background-color: var(--color-accent-dark);
+}
+
+[data-theme='dark'] .secondary-btn {
+  background: #232323;
+  color: var(--color-text);
+}
+[data-theme='dark'] .secondary-btn:hover {
+  background: #333;
+}
+
+[data-theme='dark'] .Toastify__toast--dark {
+  background: var(--color-card-bg) !important;
+  color: var(--color-text) !important;
+}
+[data-theme='dark'] .Toastify__toast {
+  background: var(--color-card-bg) !important;
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-border-light) !important;
+}
+[data-theme='dark'] .Toastify__close-button {
+  color: var(--color-text) !important;
+}
+[data-theme='dark'] .Toastify__progress-bar {
+  background: var(--color-accent) !important;
 }

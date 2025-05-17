@@ -32,5 +32,17 @@
   "cart-total": "Cəmi",
   "cart-empty": "Səbətiniz boşdur.",
   "cart-increase": "Miqdarı artır",
-  "cart-decrease": "Miqdarı azalt"
+  "cart-decrease": "Miqdarı azalt",
+  "my-orders": "Sifarişlərim",
+  "order-date": "Tarix",
+  "order-total": "Cəmi",
+  "order-status": "Status",
+  "order-dishes": "Yeməklər",
+  "order-delivery": "Çatdırılma",
+  "order-receipt": "Qəbz",
+  "order-on-the-way": "Sifarişiniz yoldadır...",
+  "percent": "%",
+  "dish.Rustic Soft Keyboard": "Rustik Yumşaq Klaviatura",
+  "dish.Tasty Concrete Bike": "Ləzzətli Beton Velosiped",
+  "dish.Generic Plastic Chicken": "Adi Plastik Toyuq"
 }

@@ -32,5 +32,16 @@
   "cart-empty": "Your cart is empty.",
   "cart-increase": "Increase quantity",
   "cart-decrease": "Decrease quantity",
-  "my-orders": "Orders"
+  "my-orders": "My Orders",
+  "order-date": "Date",
+  "order-total": "Total",
+  "order-status": "Status",
+  "order-dishes": "Dishes",
+  "order-delivery": "Delivery",
+  "order-receipt": "Receipt",
+  "order-on-the-way": "Your order is on the way...",
+  "percent": "%",
+  "dish.Rustic Soft Keyboard": "Rustic Soft Keyboard",
+  "dish.Tasty Concrete Bike": "Tasty Concrete Bike",
+  "dish.Generic Plastic Chicken": "Generic Plastic Chicken"
 }

@@ -2,10 +2,12 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const PayPalCheckout = () => {
   const { totalPrice, setCartCount } = useCart();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <PayPalScriptProvider options={{
@@ -50,6 +52,7 @@ const PayPalCheckout = () => {
               await axios.post('/api/orders', order, { withCredentials: true });
               await axios.delete(`/api/cart/clear/${user.id}`, { withCredentials: true });
               setCartCount(0);
+              navigate('/orders');
             } catch (err) {
               console.error("Error creating order:", err);
             }

@@ -100,7 +100,7 @@ const CartPage: React.FC = () => {
       setCartCount(0);
       setTotalPrice(0);
       toast.success('Ваш заказ успешно оформлен!');
-      navigate('/profile');
+      navigate('/orders');
     } catch (error) {
       toast.error('Ошибка при оформлении заказа');
     }

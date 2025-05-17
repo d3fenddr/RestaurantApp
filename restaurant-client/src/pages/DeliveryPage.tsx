@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 import './css/DeliveryPage.css';
 
 const DeliveryPage: React.FC = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
   const [progress, setProgress] = useState(0);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!orderId) return;
@@ -39,11 +41,11 @@ const DeliveryPage: React.FC = () => {
 
   return (
     <div className="delivery-container">
-      <h1>Your order is on the way...</h1>
+      <h1>{t('order-on-the-way')}</h1>
       <div className="progress-bar">
         <div className="progress" style={{ width: `${progress}%` }}></div>
       </div>
-      <p>{progress}%</p>
+      <p>{progress}{t('percent')}</p>
     </div>
   );
 };
