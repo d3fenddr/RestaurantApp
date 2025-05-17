@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import PayPalCheckout from '../components/PayPalCheckout';
 import { useCart } from '../context/CartContext';
+import { useTranslation } from 'react-i18next'; // добавь импорт
 
 interface CartItem {
   id: number;
@@ -15,7 +16,9 @@ interface CartItem {
 
 interface Dish {
   id: number;
-  name: string;
+  nameEn: string;
+  nameRu: string;
+  nameAz: string;
   price: number;
 }
 
@@ -24,7 +27,7 @@ const CartPage: React.FC = () => {
   const { setCartCount, setTotalPrice } = useCart();
   const [items, setItems] = useState<CartItem[]>([]);
   const [dishes, setDishes] = useState<Dish[]>([]);
-  const [message] = useState('');
+  const { i18n } = useTranslation(); // хук перевода
 
   useEffect(() => {
     if (!user) return;
@@ -33,6 +36,14 @@ const CartPage: React.FC = () => {
   }, [user]);
 
   const getDish = (id: number) => dishes.find(d => d.id === id);
+
+  // Универсальная функция для получения имени блюда по языку
+  const getDishName = (dish: Dish) => {
+    if (!dish) return '';
+    if (i18n.language === 'ru') return dish.nameRu || dish.nameEn;
+    if (i18n.language === 'az') return dish.nameAz || dish.nameEn;
+    return dish.nameEn;
+  };
 
   const total = items.reduce((sum, item) => {
     const dish = getDish(item.dishId);
@@ -45,7 +56,6 @@ const CartPage: React.FC = () => {
 
   const updateQuantity = async (dishId: number, delta: number) => {
     if (!user) return;
-    
     if (!items.some(i => i.dishId === dishId)) return;
 
     try {
@@ -69,14 +79,13 @@ const CartPage: React.FC = () => {
   return (
     <div className="cart-container">
       <h1>Your Cart</h1>
-      {message && <p className="success-message">{message}</p>}
       <div className="cart-grid">
         {items.map(item => {
           const dish = getDish(item.dishId);
           if (!dish) return null;
           return (
             <div key={item.id} className="cart-item">
-              <h3>{dish.name}</h3>
+              <h3>{getDishName(dish)}</h3>
               <div className="quantity-controls">
                 <button onClick={() => updateQuantity(item.dishId, -1)}>-</button>
                 <span>{item.quantity}</span>

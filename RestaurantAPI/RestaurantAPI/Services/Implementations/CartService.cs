@@ -21,16 +21,31 @@ namespace RestaurantAPI.Services.Implementations
         public async Task<IEnumerable<CartItemDto>> GetCartItemsByUserIdAsync(int userId)
         {
             return await _context.CartItems
-                .Where(c => c.UserId == userId)
-                .Select(c => new CartItemDto
+                .Where(ci => ci.UserId == userId)
+                .Include(ci => ci.Dish) // обязательно!
+                .Select(ci => new CartItemDto
                 {
-                    Id = c.Id,
-                    UserId = c.UserId,
-                    DishId = c.DishId,
-                    Quantity = c.Quantity
+                    Id = ci.Id,
+                    UserId = ci.UserId,
+                    DishId = ci.DishId,
+                    Quantity = ci.Quantity,
+                    Dish = new DishDto
+                    {
+                        Id = ci.Dish.Id,
+                        NameEn = ci.Dish.NameEn,
+                        NameRu = ci.Dish.NameRu,
+                        NameAz = ci.Dish.NameAz,
+                        DescriptionEn = ci.Dish.DescriptionEn,
+                        DescriptionRu = ci.Dish.DescriptionRu,
+                        DescriptionAz = ci.Dish.DescriptionAz,
+                        Price = ci.Dish.Price,
+                        ImageUrl = ci.Dish.ImageUrl,
+                        DishCategoryId = ci.Dish.DishCategoryId
+                    }
                 })
                 .ToListAsync();
         }
+
 
         public async Task<CartItemDto> AddCartItemAsync(CartItemDto cartItemDto)
         {
