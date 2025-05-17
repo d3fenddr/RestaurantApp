@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './css/AdminModal.css'; // Используй общий стиль для всех модалок
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './css/AdminModal.css';
 
 interface Props {
   onClose: () => void;
@@ -16,6 +18,7 @@ const AddDishModal: React.FC<Props> = ({ onClose, onAdded }) => {
     descriptionEn: '',
     descriptionRu: '',
     descriptionAz: '',
+    dishCategoryId: '',
     image: null as File | null,
   });
   const [loading, setLoading] = useState(false);
@@ -40,15 +43,20 @@ const AddDishModal: React.FC<Props> = ({ onClose, onAdded }) => {
       data.append('DescriptionEn', form.descriptionEn);
       data.append('DescriptionRu', form.descriptionRu);
       data.append('DescriptionAz', form.descriptionAz);
+      data.append('DishCategoryId', form.dishCategoryId);
       if (form.image) data.append('Image', form.image);
 
-      // Только так!
-      await axios.post('/api/dishes', data);
+      await axios.post('/api/dishes', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
 
+      toast.success('Dish added successfully!');
       if (onAdded) onAdded();
       onClose();
     } catch {
-      alert('Failed to add dish');
+      toast.error('Failed to add dish.');
     } finally {
       setLoading(false);
     }
@@ -58,72 +66,17 @@ const AddDishModal: React.FC<Props> = ({ onClose, onAdded }) => {
     <div className="modal-bg">
       <form className="modal" onSubmit={handleSubmit}>
         <h2 style={{ color: '#ba420f', marginBottom: 24, textAlign: 'center' }}>Add New Dish</h2>
-        <input
-          name="nameEn"
-          placeholder="Name (English)"
-          value={form.nameEn}
-          onChange={handleChange}
-          required
-          className="admin-input"
-        />
-        <input
-          name="nameRu"
-          placeholder="Name (Russian)"
-          value={form.nameRu}
-          onChange={handleChange}
-          required
-          className="admin-input"
-        />
-        <input
-          name="nameAz"
-          placeholder="Name (Azerbaijani)"
-          value={form.nameAz}
-          onChange={handleChange}
-          required
-          className="admin-input"
-        />
-        <input
-          name="price"
-          type="number"
-          step="0.01"
-          placeholder="Price"
-          value={form.price}
-          onChange={handleChange}
-          required
-          className="admin-input"
-        />
-        <input
-          name="descriptionEn"
-          placeholder="Description (English)"
-          value={form.descriptionEn}
-          onChange={handleChange}
-          required
-          className="admin-input"
-        />
-        <input
-          name="descriptionRu"
-          placeholder="Description (Russian)"
-          value={form.descriptionRu}
-          onChange={handleChange}
-          required
-          className="admin-input"
-        />
-        <input
-          name="descriptionAz"
-          placeholder="Description (Azerbaijani)"
-          value={form.descriptionAz}
-          onChange={handleChange}
-          required
-          className="admin-input"
-        />
-        <input
-          name="image"
-          type="file"
-          accept="image/*"
-          onChange={handleChange}
-          className="admin-input"
-          style={{ marginBottom: 16 }}
-        />
+
+        <input name="nameEn" placeholder="Name (English)" value={form.nameEn} onChange={handleChange} required className="admin-input" />
+        <input name="nameRu" placeholder="Name (Russian)" value={form.nameRu} onChange={handleChange} required className="admin-input" />
+        <input name="nameAz" placeholder="Name (Azerbaijani)" value={form.nameAz} onChange={handleChange} required className="admin-input" />
+        <input name="price" type="number" step="0.01" placeholder="Price" value={form.price} onChange={handleChange} required className="admin-input" />
+        <input name="descriptionEn" placeholder="Description (English)" value={form.descriptionEn} onChange={handleChange} required className="admin-input" />
+        <input name="descriptionRu" placeholder="Description (Russian)" value={form.descriptionRu} onChange={handleChange} required className="admin-input" />
+        <input name="descriptionAz" placeholder="Description (Azerbaijani)" value={form.descriptionAz} onChange={handleChange} required className="admin-input" />
+        <input name="dishCategoryId" type="number" placeholder="Dish Category ID" value={form.dishCategoryId} onChange={handleChange} required className="admin-input" />
+        <input name="image" type="file" accept="image/*" onChange={handleChange} className="admin-input" style={{ marginBottom: 16 }} />
+
         <div style={{ display: "flex", gap: 16, marginTop: 12 }}>
           <button type="submit" className="admin-save-btn" disabled={loading}>Save</button>
           <button type="button" className="admin-cancel-btn" onClick={onClose}>Cancel</button>

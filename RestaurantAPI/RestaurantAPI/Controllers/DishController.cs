@@ -38,7 +38,7 @@ namespace RestaurantAPI.Controllers
 
         // POST: api/dishes
         [HttpPost]
-        public async Task<ActionResult<DishDto>> Create([FromBody] DishDto dishDto)
+        public async Task<ActionResult<DishDto>> Create([FromForm] DishCreateDto dishDto)
         {
             var createdDish = await _dishService.CreateDishAsync(dishDto);
             return CreatedAtAction(nameof(GetById), new { id = createdDish.Id }, createdDish);

@@ -9,5 +9,7 @@ namespace RestaurantAPI.Services.Interfaces
         Task<string> RegisterAsync(RegisterRequestDto request);
         Task<AuthResponseDto> LoginAsync(LoginRequestDto request);
         string RefreshAccessToken(User user);
+        string GenerateAccessToken(User user);
+        string GenerateRefreshToken();
     }
 }

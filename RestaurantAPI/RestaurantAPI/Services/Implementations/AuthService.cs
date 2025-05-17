@@ -55,7 +55,7 @@ namespace RestaurantAPI.Services.Implementations
             }
 
             var accessToken = GenerateJwtToken(user);
-            var refreshToken = GenerateRefreshToken(user.Id);
+            var refreshToken = GenerateRefreshTokenEntity(user.Id);
 
             _context.RefreshTokens.Add(refreshToken);
             await _context.SaveChangesAsync();
@@ -83,29 +83,35 @@ namespace RestaurantAPI.Services.Implementations
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(15), 
+                expires: DateTime.UtcNow.AddMinutes(15),
                 signingCredentials: credentials
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private RefreshToken GenerateRefreshToken(int userId)
+        private RefreshToken GenerateRefreshTokenEntity(int userId)
         {
-            var refreshToken = new RefreshToken
+            return new RefreshToken
             {
                 Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-                Expires = DateTime.UtcNow.AddDays(7), 
+                Expires = DateTime.UtcNow.AddDays(7),
                 Created = DateTime.UtcNow,
                 UserId = userId
             };
-
-            return refreshToken;
         }
 
         public string RefreshAccessToken(User user)
         {
             return GenerateJwtToken(user);
+        }
+        public string GenerateAccessToken(User user)
+        {
+            return GenerateJwtToken(user);
+        }
+        public string GenerateRefreshToken()
+        {
+            return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
         }
     }
 }

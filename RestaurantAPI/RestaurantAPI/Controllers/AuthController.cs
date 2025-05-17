@@ -71,11 +71,61 @@ namespace RestaurantAPI.Controllers
             if (entry == null)
                 return BadRequest(new { message = "Invalid or expired token." });
 
-            entry.User.IsEmailConfirmed = true;
+            var user = entry.User;
+            user.IsEmailConfirmed = true;
             _context.EmailVerificationTokens.Remove(entry);
+
+            var accessToken = _authService.GenerateAccessToken(user);
+            var refreshToken = _authService.GenerateRefreshToken();
+
+            _context.RefreshTokens.Add(new RefreshToken
+            {
+                UserId = user.Id,
+                Token = refreshToken,
+                Expires = DateTime.UtcNow.AddDays(7)
+            });
+
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Email confirmed successfully!" });
+            bool isDev = _env.IsDevelopment();
+
+            Response.Cookies.Append("accessToken", accessToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = !isDev,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddMinutes(15)
+            });
+
+            Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = !isDev,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(7)
+            });
+
+            Response.Cookies.Append("refreshTokenExpire", DateTime.UtcNow.AddDays(7).ToString("o"), new CookieOptions
+            {
+                HttpOnly = false,
+                Secure = !isDev,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(7)
+            });
+
+            return Ok(new
+            {
+                message = "Email confirmed successfully!",
+                user = new
+                {
+                    id = user.Id,
+                    fullName = user.FullName,
+                    email = user.Email,
+                    role = user.Role,
+                    isEmailConfirmed = user.IsEmailConfirmed,
+                    avatarUrl = user.AvatarUrl
+                }
+            });
         }
 
         [HttpPost("login")]
@@ -223,7 +273,6 @@ namespace RestaurantAPI.Controllers
         [HttpPost("resend-verification")]
         public async Task<IActionResult> ResendVerification([FromBody] ResendVerificationRequest request)
         {
-            Console.WriteLine("resend-verification for email: " + request.Email);
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
 
             if (user == null || user.IsEmailConfirmed)
@@ -245,6 +294,5 @@ namespace RestaurantAPI.Controllers
 
             return Ok(new { message = "Verification email sent." });
         }
-
     }
 }

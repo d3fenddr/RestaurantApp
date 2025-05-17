@@ -12,10 +12,12 @@ namespace RestaurantAPI.Services.Implementations
     public class DishService : IDishService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IBlobStorageService _blobStorageService;
 
-        public DishService(ApplicationDbContext context)
+        public DishService(ApplicationDbContext context, IBlobStorageService blobStorageService)
         {
             _context = context;
+            _blobStorageService = blobStorageService;
         }
 
         public async Task<IEnumerable<DishDto>> GetAllDishesAsync()
@@ -58,8 +60,14 @@ namespace RestaurantAPI.Services.Implementations
             };
         }
 
-        public async Task<DishDto> CreateDishAsync(DishDto dishDto)
+        public async Task<DishDto> CreateDishAsync(DishCreateDto dishDto)
         {
+            string? imageUrl = null;
+            if (dishDto.Image != null)
+            {
+                imageUrl = await _blobStorageService.UploadFileAsync(dishDto.Image, "dishes");
+            }
+
             var dish = new Dish
             {
                 NameEn = dishDto.NameEn,
@@ -70,13 +78,25 @@ namespace RestaurantAPI.Services.Implementations
                 DescriptionAz = dishDto.DescriptionAz,
                 Price = dishDto.Price,
                 DishCategoryId = dishDto.DishCategoryId,
-                ImageUrl = dishDto.ImageUrl
+                ImageUrl = imageUrl
             };
 
             _context.Dishes.Add(dish);
             await _context.SaveChangesAsync();
-            dishDto.Id = dish.Id;
-            return dishDto;
+
+            return new DishDto
+            {
+                Id = dish.Id,
+                NameEn = dish.NameEn,
+                NameRu = dish.NameRu,
+                NameAz = dish.NameAz,
+                DescriptionEn = dish.DescriptionEn,
+                DescriptionRu = dish.DescriptionRu,
+                DescriptionAz = dish.DescriptionAz,
+                Price = dish.Price,
+                DishCategoryId = dish.DishCategoryId,
+                ImageUrl = dish.ImageUrl
+            };
         }
 
         public async Task<bool> UpdateDishAsync(int id, DishDto dishDto)

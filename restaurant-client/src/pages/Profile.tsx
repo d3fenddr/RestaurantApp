@@ -168,12 +168,12 @@ const Profile: React.FC = () => {
 
         {user.isEmailConfirmed ? (
           <p className="profile-email-status">
-            <strong>Email Status:</strong> <span className="confirmed">Confirmed ✅</span>
+            <strong>Email Status:</strong> <span className="confirmed">Confirmed</span>
           </p>
         ) : (
           <>
             <p className="profile-email-status">
-              <strong>Email Status:</strong> <span className="not-confirmed">Not confirmed ❌</span>
+              <strong>Email Status:</strong> <span className="not-confirmed">Not confirmed</span>
             </p>
             <button className="profile-btn" onClick={handleResendVerification}>
               Send Verification Email
