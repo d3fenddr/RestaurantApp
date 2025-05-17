@@ -27,7 +27,7 @@ const CartPage: React.FC = () => {
   const { setCartCount, setTotalPrice } = useCart();
   const [items, setItems] = useState<CartItem[]>([]);
   const [dishes, setDishes] = useState<Dish[]>([]);
-  const { i18n } = useTranslation(); // хук перевода
+  const { i18n, t } = useTranslation(); // хук перевода
 
   useEffect(() => {
     if (!user) return;
@@ -78,7 +78,7 @@ const CartPage: React.FC = () => {
 
   return (
     <div className="cart-container">
-      <h1>Your Cart</h1>
+      <h1>{t('cart-title')}</h1>
       <div className="cart-grid">
         {items.map(item => {
           const dish = getDish(item.dishId);
@@ -96,7 +96,7 @@ const CartPage: React.FC = () => {
           );
         })}
       </div>
-      <h3>Total: {total.toFixed(2)} $</h3>
+      <p>{t('cart-total')}: {total.toFixed(2)} $</p>
       {items.length > 0 && (
         <div style={{ maxWidth: "400px", marginTop: "20px" }}>
           <PayPalCheckout />

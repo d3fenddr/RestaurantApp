@@ -25,5 +25,12 @@
   "contact-phone2": "Telefon 2: +994 (051) 394-4224",
   "contact-address": "Ünvan: 70 Koroğlu Rəhimov, Bakı 1009",
   "terms-title": "Şərtlər və Qaydalar",
-  "terms-description": "Xidmətimizdən istifadə etməklə istifadə şərtlərimizlə razılaşırsınız. Bütün sifarişlər mövcudluq və yerli çatdırılma qaydalarına tabedir. Qiymətləri və menyu maddələrini istənilən vaxt dəyişdirmək hüququnu özümüzdə saxlayırıq. Zəhmət olmasa, davam etməzdən əvvəl diqqətlə oxuyun."
+  "terms-description": "Xidmətimizdən istifadə etməklə istifadə şərtlərimizlə razılaşırsınız. Bütün sifarişlər mövcudluq və yerli çatdırılma qaydalarına tabedir. Qiymətləri və menyu maddələrini istənilən vaxt dəyişdirmək hüququnu özümüzdə saxlayırıq. Zəhmət olmasa, davam etməzdən əvvəl diqqətlə oxuyun.",
+  "add-to-cart": "Səbətə əlavə et",
+  "price-label": "Qiymət",
+  "cart-title": "Səbətiniz",
+  "cart-total": "Cəmi",
+  "cart-empty": "Səbətiniz boşdur.",
+  "cart-increase": "Miqdarı artır",
+  "cart-decrease": "Miqdarı azalt"
 }

@@ -24,5 +24,12 @@
   "contact-phone2": "Phone 2: +994 (051) 394-4224",
   "contact-address": "Address: 70 Koroğlu Rəhimov, Baku 1009",
   "terms-title": "Terms & Conditions",
-  "terms-description": "By using our service, you agree to the terms of use. All orders are subject to availability and local delivery rules. We reserve the right to change pricing or menu items at any time. Please read carefully before proceeding."
+  "terms-description": "By using our service, you agree to the terms of use. All orders are subject to availability and local delivery rules. We reserve the right to change pricing or menu items at any time. Please read carefully before proceeding.",
+  "add-to-cart": "Add to Cart",
+  "price-label": "Price",
+  "cart-title": "Your Cart",
+  "cart-total": "Total",
+  "cart-empty": "Your cart is empty.",
+  "cart-increase": "Increase quantity",
+  "cart-decrease": "Decrease quantity"
 }

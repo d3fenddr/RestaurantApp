@@ -97,9 +97,9 @@ const DishesList: React.FC = () => {
               <img src={dish.imageUrl} alt={getDishName(dish, i18n.language)} className="dish-image" />
               <h2>{getDishName(dish, i18n.language)}</h2>
               <p>{getDishDescription(dish, i18n.language)}</p>
-              <p>Price: {dish.price} ₼</p>
+              <p>{t('price-label')}: {dish.price} ₼</p>
             </Link>
-            <button onClick={() => addToCart(dish.id)} className="add-button">Add to Cart</button>
+            <button onClick={() => addToCart(dish.id)} className="add-button">{t('add-to-cart')}</button>
           </div>
         ))}
       </div>
